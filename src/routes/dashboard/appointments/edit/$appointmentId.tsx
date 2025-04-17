@@ -180,8 +180,8 @@ function EditAppointmentPage() {
   }, [appointmentId, form, navigator]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast("Randevu güncellendi", {
-      description: "Randevu bilgileri başarıyla güncellendi.",
+    toast("Appointment updated", {
+      description: "Appointment details have been successfully updated.",
     });
 
     // In a real app, you would update the appointment in the database
@@ -194,17 +194,16 @@ function EditAppointmentPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
-        <p>Yükleniyor...</p>
+        <p>Loading...</p>
       </div>
     );
   }
-
   if (!appointment) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
-        <p>Randevu bulunamadı.</p>
+        <p>Appointment not found.</p>
         <Button asChild className="mt-4">
-          <Link to="/dashboard/appointments">Randevulara Dön</Link>
+          <Link to="/dashboard/appointments">Return to Appointments</Link>
         </Button>
       </div>
     );
@@ -215,17 +214,22 @@ function EditAppointmentPage() {
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" asChild>
-            <Link to={`/dashboard/appointments/${appointmentId}`}>
+            <Link
+              to={`/dashboard/appointments/$appointmentId`}
+              params={{ appointmentId }}
+            >
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <h1 className="text-2xl font-bold">Randevu Düzenle</h1>
+          <h1 className="text-2xl font-bold">Edit Appointment</h1>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Randevu Bilgileri</CardTitle>
-            <CardDescription>Randevu detaylarını düzenleyin</CardDescription>
+            <CardTitle>Appointment Details</CardTitle>
+            <CardDescription>
+              Edit the details of the appointment
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -239,9 +243,9 @@ function EditAppointmentPage() {
                     name="clientName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Müşteri Adı</FormLabel>
+                        <FormLabel>Client Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Müşteri adını girin" {...field} />
+                          <Input placeholder="Enter client name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -253,7 +257,7 @@ function EditAppointmentPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Telefon Numarası</FormLabel>
+                        <FormLabel>Phone Number</FormLabel>
                         <FormControl>
                           <Input placeholder="+90 555 123 4567" {...field} />
                         </FormControl>
@@ -267,9 +271,9 @@ function EditAppointmentPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>E-posta (İsteğe bağlı)</FormLabel>
+                        <FormLabel>Email (Optional)</FormLabel>
                         <FormControl>
-                          <Input placeholder="ornek@email.com" {...field} />
+                          <Input placeholder="example@email.com" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -281,9 +285,9 @@ function EditAppointmentPage() {
                     name="service"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Hizmet</FormLabel>
+                        <FormLabel>Service</FormLabel>
                         <FormControl>
-                          <Input placeholder="Hizmet adını girin" {...field} />
+                          <Input placeholder="Enter service name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -295,7 +299,7 @@ function EditAppointmentPage() {
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Tarih</FormLabel>
+                        <FormLabel>Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -309,7 +313,7 @@ function EditAppointmentPage() {
                                 {field.value ? (
                                   format(field.value, "PPP", { locale: tr })
                                 ) : (
-                                  <span>Tarih seçin</span>
+                                  <span>Select a date</span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
@@ -334,14 +338,14 @@ function EditAppointmentPage() {
                     name="time"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Saat</FormLabel>
+                        <FormLabel>Time</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Saat seçin" />
+                              <SelectValue placeholder="Select a time" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -366,14 +370,14 @@ function EditAppointmentPage() {
                     name="staff"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Personel</FormLabel>
+                        <FormLabel>Staff</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Personel seçin" />
+                              <SelectValue placeholder="Select a staff member" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -393,25 +397,21 @@ function EditAppointmentPage() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Durum</FormLabel>
+                        <FormLabel>Status</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Durum seçin" />
+                              <SelectValue placeholder="Select a status" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="pending">Bekliyor</SelectItem>
-                            <SelectItem value="confirmed">Onaylı</SelectItem>
-                            <SelectItem value="completed">
-                              Tamamlandı
-                            </SelectItem>
-                            <SelectItem value="cancelled">
-                              İptal Edildi
-                            </SelectItem>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="confirmed">Confirmed</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -425,10 +425,10 @@ function EditAppointmentPage() {
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Notlar (İsteğe bağlı)</FormLabel>
+                      <FormLabel>Notes (Optional)</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Randevu hakkında özel notlar ekleyin"
+                          placeholder="Add special notes about the appointment"
                           className="resize-none"
                           {...field}
                         />
@@ -440,11 +440,14 @@ function EditAppointmentPage() {
 
                 <div className="flex justify-end gap-2">
                   <Button variant="outline" type="button" asChild>
-                    <Link to={`/dashboard/appointments/${appointmentId}`}>
-                      İptal
+                    <Link
+                      to={`/dashboard/appointments/$appointmentId`}
+                      params={{ appointmentId }}
+                    >
+                      Cancel
                     </Link>
                   </Button>
-                  <Button type="submit">Kaydet</Button>
+                  <Button type="submit">Save</Button>
                 </div>
               </form>
             </Form>

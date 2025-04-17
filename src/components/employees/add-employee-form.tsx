@@ -36,11 +36,11 @@ const AddEmployeeForm = ({
   const onSubmit = () => {
     createEmployee(formData, {
       onSuccess: () => {
-        toast.success("Personel başarıyla eklendi.");
+        toast.success("Employee added successfully.");
         onCancel();
       },
       onError: (error) => {
-        toast.error("Personel eklenirken bir hata oluştu.");
+        toast.error("An error occurred while adding the employee.");
         console.error(error);
       },
     });
@@ -49,13 +49,15 @@ const AddEmployeeForm = ({
   return (
     <div>
       <DialogHeader>
-        <DialogTitle>Personel Ekle</DialogTitle>
-        <DialogDescription>Yeni personel bilgilerini girin.</DialogDescription>
+        <DialogTitle>Add Employee</DialogTitle>
+        <DialogDescription>
+          Enter the details of the new employee.
+        </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="name" className="text-right">
-            Adı
+            Name
           </Label>
           <Input
             id="name"
@@ -66,7 +68,7 @@ const AddEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="role" className="text-right">
-            Rolü
+            Role
           </Label>
           <Input
             id="role"
@@ -77,7 +79,7 @@ const AddEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="email" className="text-right">
-            E-posta
+            Email
           </Label>
           <Input
             id="email"
@@ -88,7 +90,7 @@ const AddEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="phone" className="text-right">
-            Telefon
+            Phone
           </Label>
           <Input
             id="phone"
@@ -99,7 +101,7 @@ const AddEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="specialties" className="text-right">
-            Uzmanlık Alanları
+            Specialties
           </Label>
           <MultiSelect
             options={availableServices}
@@ -111,10 +113,10 @@ const AddEmployeeForm = ({
       </div>
       <DialogFooter>
         <Button variant="secondary" onClick={onCancel}>
-          İptal
+          Cancel
         </Button>
         <Button type="submit" onClick={onSubmit}>
-          Kaydet
+          Save
         </Button>
       </DialogFooter>
     </div>

@@ -7,93 +7,76 @@ const API = axios.create({
   withCredentials: true,
 });
 
-let isRefreshing = false;
-let refreshPromise: Promise<string | null> | null = null;
+// Refresh token işlevi
+async function refreshAccessToken() {
+  try {
+    const response = await API.post(`/auth/refresh-token`);
+    const newAccessToken = response.data.accessToken;
 
-const refreshAccessToken = async (): Promise<string | null> => {
-  if (!isRefreshing) {
-    isRefreshing = true;
-    refreshPromise = API.post(`/auth/refresh-token`)
-      .then((response) => {
-        const newAccessToken = response.data.accessToken;
-        useAccessKey().setState(() => newAccessToken);
-        return newAccessToken;
-      })
-      .catch((error) => {
-        useAuth().logout();
-        return null;
-      })
-      .finally(() => {
-        isRefreshing = false;
-        refreshPromise = null;
-      });
+    // Access token'ı store'da güncelle
+    const accessKeyStore = useAccessKey();
+    accessKeyStore.setState(() => newAccessToken);
+
+    return newAccessToken;
+  } catch (error) {
+    console.error("Refresh token failed:", error);
+    throw error;
   }
-  return refreshPromise!;
-};
+}
 
-//Request interceptor
+// Request interceptor: Access token'ı tüm isteklere ekle, ancak /auth/ isteklerinde ekleme
 API.interceptors.request.use(
   async (config) => {
-    if (!config.url?.startsWith("/auth")) {
+    if (!config.url?.includes("/auth/")) {
       const accessKeyStore = useAccessKey();
       let accessToken = accessKeyStore.state;
 
       if (!accessToken) {
-        accessToken = await refreshAccessToken();
+        try {
+          accessToken = await refreshAccessToken();
+        } catch (error) {
+          console.error(
+            "Failed to refresh access token before request:",
+            error
+          );
+          throw error;
+        }
       }
 
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
+
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// // Request interceptor
-// API.interceptors.request.use(
-//   async (config) => {
-//     const accessKeyStore = useAccessKey();
-//     let accessToken = accessKeyStore.state;
-
-//     if (!accessToken) {
-//       accessToken = await refreshAccessToken();
-//     }
-
-//     if (accessToken) {
-//       config.headers.Authorization = `Bearer ${accessToken}`;
-//     }
-
-//     return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
-
-// Response interceptor to handle token expiration
+// Response interceptor: 401 hatalarını yakala ve refresh token kullan
 API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (
-      error.response?.status === 401 &&
-      error.response?.data?.error === "AccessExpired" &&
-      !originalRequest._retry
-    ) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const newAccessToken = await refreshAccessToken();
-      if (newAccessToken) {
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return API(originalRequest);
-      } else {
-        return Promise.reject(error);
-      }
-    }
+      try {
+        const newAccessToken = await refreshAccessToken();
 
-    if (error.response?.data?.error === "RefreshExpired") {
-      useAuth().logout();
+        // Yeni access token ile isteği tekrar gönder
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        return API(originalRequest);
+      } catch (refreshError) {
+        console.error("Failed to refresh access token:", refreshError);
+
+        // Kullanıcıyı çıkış yap
+        const auth = useAuth();
+        auth.logout();
+
+        return Promise.reject(refreshError);
+      }
     }
 
     return Promise.reject(error);

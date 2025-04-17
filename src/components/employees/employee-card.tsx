@@ -27,7 +27,6 @@ import {
   useDeleteEmployee,
 } from "@/lib/hooks/employee.hook";
 
-// Update the EmployeeCard component to fix button styling
 function EmployeeCard({
   member,
   onStatusChange,
@@ -68,14 +67,14 @@ function EmployeeCard({
                 variant="outline"
                 className="bg-green-50 text-green-700 hover:bg-green-50 border-green-200"
               >
-                Aktif
+                Active
               </Badge>
             ) : (
               <Badge
                 variant="outline"
                 className="bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200"
               >
-                İzinli
+                On Leave
               </Badge>
             )}
           </div>
@@ -88,19 +87,19 @@ function EmployeeCard({
         </div>
         <div className="mt-4 space-y-3 text-sm">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">E-posta:</span>
+            <span className="text-muted-foreground">Email:</span>
             <span className="font-medium">{member.email}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Telefon:</span>
+            <span className="text-muted-foreground">Phone:</span>
             <span className="font-medium">{member.phone}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Çalışma:</span>
-            <span className="font-medium">{workingDaysCount} gün / hafta</span>
+            <span className="text-muted-foreground">Working:</span>
+            <span className="font-medium">{workingDaysCount} days / week</span>
           </div>
           <div className="pt-2">
-            <span className="text-muted-foreground text-xs">Uzmanlık:</span>
+            <span className="text-muted-foreground text-xs">Specialties:</span>
             <div className="flex flex-wrap gap-1 mt-1">
               {member.specialties.map((specialty: string) => (
                 <Badge key={specialty} variant="secondary" className="text-xs">
@@ -120,7 +119,7 @@ function EmployeeCard({
             className="w-full h-9 flex items-center justify-center"
           >
             <CalendarDays className="mr-2 h-4 w-4" />
-            Randevular
+            Appointments
           </Button>
           <Button
             variant="outline"
@@ -129,7 +128,7 @@ function EmployeeCard({
             className="w-full h-9 flex items-center justify-center"
           >
             <Clock className="mr-2 h-4 w-4" />
-            Çalışma Saatleri
+            Working Hours
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-2 w-full">
@@ -140,7 +139,7 @@ function EmployeeCard({
             className="w-full h-9 flex items-center justify-center"
           >
             <Edit className="mr-2 h-4 w-4" />
-            Düzenle
+            Edit
           </Button>
           <Button
             variant={member.status === "active" ? "secondary" : "default"}
@@ -153,7 +152,7 @@ function EmployeeCard({
             }
             className="w-full h-9 flex items-center justify-center"
           >
-            {member.status === "active" ? "İzne Çıkar" : "Aktif Yap"}
+            {member.status === "active" ? "Set On Leave" : "Set Active"}
           </Button>
         </div>
         <AlertDialog>
@@ -164,26 +163,26 @@ function EmployeeCard({
               className="w-full h-9 flex items-center justify-center text-destructive hover:text-destructive mt-1"
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Sil
+              Delete
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                Personeli silmek istediğinize emin misiniz?
+                Are you sure you want to delete this employee?
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Bu işlem geri alınamaz. Bu personel kaydı kalıcı olarak
-                silinecektir.
+                This action cannot be undone. This employee record will be
+                permanently deleted.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>İptal</AlertDialogCancel>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => onDelete(member.id)}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                Sil
+                Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

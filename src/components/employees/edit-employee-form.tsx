@@ -41,7 +41,7 @@ const EditEmployeeForm = ({
       { id: employee.id, updatedEmployee: formData },
       {
         onSuccess: () => {
-          toast.success("Personel başarıyla güncellendi.");
+          toast.success("Employee updated successfully.");
           onCancel();
         },
       }
@@ -51,13 +51,13 @@ const EditEmployeeForm = ({
   return (
     <div>
       <DialogHeader>
-        <DialogTitle>Personel Düzenle</DialogTitle>
-        <DialogDescription>Personel bilgilerini düzenleyin.</DialogDescription>
+        <DialogTitle>Edit Employee</DialogTitle>
+        <DialogDescription>Edit employee details.</DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="name" className="text-right">
-            Adı
+            Name
           </Label>
           <Input
             id="name"
@@ -68,7 +68,7 @@ const EditEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="role" className="text-right">
-            Rolü
+            Role
           </Label>
           <Input
             id="role"
@@ -79,7 +79,7 @@ const EditEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="email" className="text-right">
-            E-posta
+            Email
           </Label>
           <Input
             id="email"
@@ -90,7 +90,7 @@ const EditEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="phone" className="text-right">
-            Telefon
+            Phone
           </Label>
           <Input
             id="phone"
@@ -101,7 +101,7 @@ const EditEmployeeForm = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="specialties" className="text-right">
-            Uzmanlık Alanları
+            Specialties
           </Label>
           <MultiSelect
             selected={formData.specialties}
@@ -113,10 +113,10 @@ const EditEmployeeForm = ({
       </div>
       <DialogFooter>
         <Button variant="secondary" onClick={onCancel}>
-          İptal
+          Cancel
         </Button>
         <Button type="submit" onClick={onSubmit}>
-          Kaydet
+          Save
         </Button>
       </DialogFooter>
     </div>

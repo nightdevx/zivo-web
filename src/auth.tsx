@@ -1,6 +1,7 @@
 import * as React from "react";
 import AuthService from "./lib/services/auth.service";
 import { useAccessKey } from "./lib/stores/access-key.store";
+import { useLogout } from "./lib/hooks/auth.hook";
 
 export interface AuthContext {
   isAuthenticated: boolean;
@@ -29,10 +30,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<string | null>(getStoredUser());
   const isAuthenticated = !!user;
   const accessKeyStore = useAccessKey();
+  const { mutate: logoutMutation } = useLogout();
 
   const logout = React.useCallback(async () => {
     try {
-      await AuthService.logout();
+      logoutMutation(); // Call the logout mutation
       setStoredUser(null);
       setUser(null);
       accessKeyStore.setState(() => null); // Clear access token
@@ -55,7 +57,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           accessKeyStore.setState(() => accessToken); // Store access token
         }
       } catch (error) {
-        console.error("Login failed:", error);
+        if (error instanceof Error) {
+          console.error("Login failed:", error.message);
+        } else {
+          console.error("Login failed:", error);
+        }
         throw error;
       }
     },

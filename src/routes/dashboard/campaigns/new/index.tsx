@@ -69,6 +69,7 @@ const formSchema = z.object({
 });
 
 function NewCampaignPage() {
+  const navigator = Route.useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,31 +90,31 @@ function NewCampaignPage() {
   const services = [
     {
       id: "haircut",
-      label: "Saç Kesimi",
+      label: "Haircut",
     },
     {
       id: "coloring",
-      label: "Saç Boyama",
+      label: "Hair Coloring",
     },
     {
       id: "styling",
-      label: "Saç Şekillendirme",
+      label: "Hair Styling",
     },
     {
       id: "treatment",
-      label: "Saç Bakımı",
+      label: "Hair Treatment",
     },
     {
       id: "manicure",
-      label: "Manikür",
+      label: "Manicure",
     },
     {
       id: "pedicure",
-      label: "Pedikür",
+      label: "Pedicure",
     },
     {
       id: "facial",
-      label: "Yüz Bakımı",
+      label: "Facial",
     },
   ];
 
@@ -391,7 +392,7 @@ function NewCampaignPage() {
                   <Button
                     variant="outline"
                     type="button"
-                    onClick={() => window.history.back()}
+                    onClick={() => navigator({ to: ".." })}
                   >
                     Cancel
                   </Button>

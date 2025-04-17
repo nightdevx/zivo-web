@@ -25,7 +25,7 @@ function MessagesPage() {
       name: "Ayşe Yılmaz",
       avatar: "/placeholder.svg?height=40&width=40",
       initials: "AY",
-      lastMessage: "Randevumu onayladığınız için teşekkürler!",
+      lastMessage: "Thank you for confirming my appointment!",
       time: "10:23",
       unread: 2,
       online: true,
@@ -35,8 +35,8 @@ function MessagesPage() {
       name: "Mehmet Demir",
       avatar: "/placeholder.svg?height=40&width=40",
       initials: "MD",
-      lastMessage: "Yarınki randevumu iptal etmem gerekiyor.",
-      time: "Dün",
+      lastMessage: "I need to cancel my appointment for tomorrow.",
+      time: "Yesterday",
       unread: 0,
       online: false,
     },
@@ -45,8 +45,8 @@ function MessagesPage() {
       name: "Zeynep Kaya",
       avatar: "/placeholder.svg?height=40&width=40",
       initials: "ZK",
-      lastMessage: "Saç boyama için fiyat alabilir miyim?",
-      time: "Dün",
+      lastMessage: "Can I get a price for hair coloring?",
+      time: "Yesterday",
       unread: 0,
       online: true,
     },
@@ -55,8 +55,8 @@ function MessagesPage() {
       name: "Fatma Şahin",
       avatar: "/placeholder.svg?height=40&width=40",
       initials: "FŞ",
-      lastMessage: "Teşekkür ederim, görüşmek üzere!",
-      time: "Pazartesi",
+      lastMessage: "Thank you, see you soon!",
+      time: "Monday",
       unread: 0,
       online: false,
     },
@@ -69,43 +69,43 @@ function MessagesPage() {
         {
           id: "m1",
           sender: "client",
-          text: "Merhaba, yarın için bir randevu almak istiyorum.",
+          text: "Hello, I would like to book an appointment for tomorrow.",
           time: "09:30",
         },
         {
           id: "m2",
           sender: "staff",
-          text: "Merhaba Ayşe Hanım, yarın saat kaçta gelmek istersiniz?",
+          text: "Hello Ms. Ayşe, what time would you like to come tomorrow?",
           time: "09:35",
         },
         {
           id: "m3",
           sender: "client",
-          text: "Öğleden sonra 14:00 civarı uygun olur mu?",
+          text: "Would around 2:00 PM work for you?",
           time: "09:40",
         },
         {
           id: "m4",
           sender: "staff",
-          text: "Evet, 14:00 için randevunuzu oluşturdum. Hangi hizmet için geleceksiniz?",
+          text: "Yes, I have scheduled your appointment for 2:00 PM. What service will you be coming for?",
           time: "09:45",
         },
         {
           id: "m5",
           sender: "client",
-          text: "Saç kesimi ve fön çektirmek istiyorum.",
+          text: "I would like a haircut and blow-dry.",
           time: "09:50",
         },
         {
           id: "m6",
           sender: "staff",
-          text: "Tamam, randevunuz oluşturuldu. Yarın saat 14:00'te görüşmek üzere!",
+          text: "Alright, your appointment is confirmed. See you tomorrow at 2:00 PM!",
           time: "09:55",
         },
         {
           id: "m7",
           sender: "client",
-          text: "Randevumu onayladığınız için teşekkürler!",
+          text: "Thank you for confirming my appointment!",
           time: "10:23",
         },
       ],
@@ -116,8 +116,8 @@ function MessagesPage() {
         {
           id: "m1",
           sender: "client",
-          text: "Merhaba, yarınki randevumu iptal etmem gerekiyor.",
-          time: "Dün",
+          text: "Hello, I need to cancel my appointment for tomorrow.",
+          time: "Yesterday",
         },
       ],
     },
@@ -127,8 +127,8 @@ function MessagesPage() {
         {
           id: "m1",
           sender: "client",
-          text: "Saç boyama için fiyat alabilir miyim?",
-          time: "Dün",
+          text: "Can I get a price for hair coloring?",
+          time: "Yesterday",
         },
       ],
     },
@@ -138,8 +138,8 @@ function MessagesPage() {
         {
           id: "m1",
           sender: "client",
-          text: "Teşekkür ederim, görüşmek üzere!",
-          time: "Pazartesi",
+          text: "Thank you, see you soon!",
+          time: "Monday",
         },
       ],
     },
@@ -151,8 +151,6 @@ function MessagesPage() {
 
   const handleSendMessage = () => {
     if (message.trim() === "") return;
-    // In a real app, you would send the message to the server
-    // and update the messages state
     setMessage("");
   };
 

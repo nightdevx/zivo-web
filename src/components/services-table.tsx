@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/table";
 import { Service } from "@/lib/models/service.model";
 import { Clock, Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { useUpdateService, useDeleteService } from "@/lib/hooks/service.hook";
+import { toast } from "sonner";
 
 interface ServicesTableProps {
   category?: string;
@@ -25,10 +27,42 @@ interface ServicesTableProps {
 }
 
 export function ServicesTable({ category, services }: ServicesTableProps) {
+  const { mutate: updateService } = useUpdateService();
+  const { mutate: deleteService } = useDeleteService();
+
   // Filter services by category if provided
   const filteredServices = category
     ? services.filter((service) => service.category === category)
     : services;
+
+  // Handle service status change
+  const handleStatusChange = (serviceId: number, isActive: boolean) => {
+    updateService(
+      { id: serviceId, service: { isActive } },
+      {
+        onSuccess: () => {
+          toast.success("Service status updated successfully.");
+        },
+        onError: () => {
+          toast.error("Failed to update service status.");
+        },
+      }
+    );
+  };
+
+  // Handle service deletion
+  const handleDeleteService = (serviceId: number) => {
+    if (confirm("Are you sure you want to delete this service?")) {
+      deleteService(serviceId , {
+        onSuccess: () => {
+          toast.success("Service deleted successfully.");
+        },
+        onError: () => {
+          toast.error("Failed to delete service.");
+        },
+      });
+    }
+  };
 
   return (
     <div className="rounded-md border">
@@ -50,7 +84,7 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
               <TableCell>{service.category}</TableCell>
               <TableCell className="flex items-center">
                 <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                {service.duration}
+                {`${Math.floor(Number(service.duration) / 60)} hour ${Number(service.duration) % 60} min`}
               </TableCell>
               <TableCell>{service.price} ₺</TableCell>
               <TableCell>
@@ -58,6 +92,9 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
                   <Switch
                     id={`active-${service.id}`}
                     defaultChecked={service.isActive}
+                    onCheckedChange={(checked) =>
+                      handleStatusChange(service.id, checked)
+                    }
                   />
                   <span>{service.isActive ? "Active" : "Inactive"}</span>
                 </div>
@@ -77,7 +114,10 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive focus:text-destructive">
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={() => handleDeleteService(service.id)}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete
                     </DropdownMenuItem>

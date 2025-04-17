@@ -35,15 +35,15 @@ const EmployeeScheduleForm = ({
   return (
     <div>
       <DialogHeader>
-        <DialogTitle>{employee.name} - Çalışma Saatleri</DialogTitle>
+        <DialogTitle>{employee.name} - Working Hours</DialogTitle>
         <DialogDescription>
-          Personelin çalışma günlerini ve saatlerini düzenleyin.
+          Edit the employee's working days and hours.
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="monday" className="text-right">
-            Pazartesi
+            Monday
           </Label>
           <Switch
             id="monday"
@@ -53,7 +53,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="tuesday" className="text-right">
-            Salı
+            Tuesday
           </Label>
           <Switch
             id="tuesday"
@@ -63,7 +63,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="wednesday" className="text-right">
-            Çarşamba
+            Wednesday
           </Label>
           <Switch
             id="wednesday"
@@ -73,7 +73,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="thursday" className="text-right">
-            Perşembe
+            Thursday
           </Label>
           <Switch
             id="thursday"
@@ -83,7 +83,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="friday" className="text-right">
-            Cuma
+            Friday
           </Label>
           <Switch
             id="friday"
@@ -93,7 +93,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="saturday" className="text-right">
-            Cumartesi
+            Saturday
           </Label>
           <Switch
             id="saturday"
@@ -103,7 +103,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="sunday" className="text-right">
-            Pazar
+            Sunday
           </Label>
           <Switch
             id="sunday"
@@ -114,7 +114,7 @@ const EmployeeScheduleForm = ({
         <Separator />
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="start" className="text-right">
-            Başlangıç
+            Start
           </Label>
           <Input
             type="time"
@@ -125,7 +125,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="end" className="text-right">
-            Bitiş
+            End
           </Label>
           <Input
             type="time"
@@ -137,7 +137,7 @@ const EmployeeScheduleForm = ({
         <Separator />
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="breakStart" className="text-right">
-            Mola Başlangıcı
+            Break Start
           </Label>
           <Input
             type="time"
@@ -148,7 +148,7 @@ const EmployeeScheduleForm = ({
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <Label htmlFor="breakEnd" className="text-right">
-            Mola Bitişi
+            Break End
           </Label>
           <Input
             type="time"
@@ -160,13 +160,13 @@ const EmployeeScheduleForm = ({
       </div>
       <DialogFooter>
         <Button variant="secondary" onClick={onCancel}>
-          İptal
+          Cancel
         </Button>
         <Button
           type="submit"
           onClick={() => onSubmit({ workingDays, workingHours })}
         >
-          Kaydet
+          Save
         </Button>
       </DialogFooter>
     </div>

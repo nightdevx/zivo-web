@@ -2,7 +2,7 @@ type Service = {
   category: string;
   company_id: number | null;
   description: string | null;
-  duration: unknown;
+  duration: string;
   id: number;
   isActive: boolean;
   name: string;
@@ -12,7 +12,7 @@ type Service = {
 type ServiceInsert = {
   category: string;
   description: string | null;
-  duration: unknown;
+  duration: string;
   isActive: boolean;
   name: string;
   price: string;
@@ -22,7 +22,7 @@ type ServiceUpdate = {
   category?: string;
   company_id?: number | null;
   description?: string | null;
-  duration?: unknown;
+  duration?: string;
   isActive?: boolean;
   name?: string;
   price?: number;

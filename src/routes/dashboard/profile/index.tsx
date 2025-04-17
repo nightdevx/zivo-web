@@ -47,6 +47,8 @@ import {
   CompanyUpdate,
 } from "@/lib/models/companies.model";
 import { User, UserUpdate } from "@/lib/models/users.model";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/dashboard/profile/")({
   loader: ({ context: { queryClient } }) => {
@@ -86,13 +88,93 @@ const companyFormSchema = z.object({
   description: z.string().nullable().optional(),
 });
 
+// Renk teması tipi
+interface ColorTheme {
+  primary: string;
+  secondary: string;
+  background: string;
+  text: string;
+}
+
 export default function ProfilePage() {
   const userQuery = useSuspenseQuery(GetMyUserQueryOptions);
-  const userData: User | undefined = userQuery.data;
+  const userData: User = userQuery.data;
 
   const companyQuery = useSuspenseQuery(GetMyCompanyQueryOptions);
-  const companyData: Company | undefined = companyQuery.data;
+  const companyData: Company = companyQuery.data;
 
+  // Renk teması state'i
+  const [colorTheme, setColorTheme] = useState<ColorTheme>({
+    primary: "#8b5cf6", // Mor
+    secondary: "#7c3aed", // Koyu mor
+    background: "#f8fafc", // Açık gri
+    text: "#1e293b", // Koyu gri
+  });
+
+  // Önceden tanımlanmış renk temaları
+  const predefinedThemes = [
+    {
+      name: "Mor",
+      primary: "#8b5cf6",
+      secondary: "#7c3aed",
+      background: "#f8fafc",
+      text: "#1e293b",
+    },
+    {
+      name: "Mavi",
+      primary: "#3b82f6",
+      secondary: "#2563eb",
+      background: "#f8fafc",
+      text: "#1e293b",
+    },
+    {
+      name: "Yeşil",
+      primary: "#10b981",
+      secondary: "#059669",
+      background: "#f8fafc",
+      text: "#1e293b",
+    },
+    {
+      name: "Kırmızı",
+      primary: "#ef4444",
+      secondary: "#dc2626",
+      background: "#f8fafc",
+      text: "#1e293b",
+    },
+    {
+      name: "Turuncu",
+      primary: "#f97316",
+      secondary: "#ea580c",
+      background: "#f8fafc",
+      text: "#1e293b",
+    },
+  ];
+
+  // Renk değiştirme fonksiyonu
+  const handleColorChange = (colorKey: keyof ColorTheme, value: string) => {
+    setColorTheme((prev) => ({ ...prev, [colorKey]: value }));
+  };
+
+  // Hazır tema seçme fonksiyonu
+  const applyPredefinedTheme = (theme: (typeof predefinedThemes)[0]) => {
+    setColorTheme(theme);
+    toast("Tema uygulandı", {
+      description: `${theme.name} teması başarıyla uygulandı.`,
+    });
+  };
+
+  const saveColorTheme = () => {
+    toast("Renk teması kaydedildi", {
+      description: "Renk teması başarıyla kaydedildi.",
+    });
+  };
+  // Örnek logo yükleme işlevi
+  const handleLogoUpload = () => {
+    // Gerçek bir uygulamada, burada dosya yükleme işlemi yapılır
+    toast("Logo yükleniyor", {
+      description: "Logo yükleme işlemi başlatıldı.",
+    });
+  };
   const userForm = useForm<UserUpdate>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -181,7 +263,7 @@ export default function ProfilePage() {
   // }
 
   // Check if userData and companyData are defined
-  if (!userData || !companyData) {
+  if (!userData) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <p className="text-lg text-muted-foreground">
@@ -202,7 +284,7 @@ export default function ProfilePage() {
           <TabsList>
             <TabsTrigger value="user">User Information</TabsTrigger>
             <TabsTrigger value="company">Business Information</TabsTrigger>
-            {/* <TabsTrigger value="branding">Appearance</TabsTrigger> */}
+            <TabsTrigger value="branding">Appearance</TabsTrigger>
           </TabsList>
 
           <TabsContent value="user">
@@ -484,23 +566,23 @@ export default function ProfilePage() {
             </Card>
           </TabsContent>
 
-          {/* <TabsContent value="branding">
+          <TabsContent value="branding">
             <Card>
               <CardHeader>
-                <CardTitle>Appearance Settings</CardTitle>
+                <CardTitle>Branding & Appearance</CardTitle>
                 <CardDescription>
-                  Customize the appearance of your business
+                  Customize how your business appears to clients
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium">Logo & Images</h3>
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div className="grid gap-4 md:grid-cols-2">
                       <div className="flex flex-col gap-2 items-center justify-center p-4 border rounded-md">
                         <div className="relative">
-                          <Image
-                            src="/placeholder.svg?height=80&width=80&text=Logo"
+                          <LazyLoadImage
+                            src="/zivologo.jpg"
                             alt="Business logo"
                             width={80}
                             height={80}
@@ -510,6 +592,7 @@ export default function ProfilePage() {
                             variant="ghost"
                             size="icon"
                             className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-primary text-primary-foreground shadow-sm"
+                            onClick={handleLogoUpload}
                           >
                             <CameraIcon className="h-3 w-3" />
                             <span className="sr-only">Upload logo</span>
@@ -520,8 +603,8 @@ export default function ProfilePage() {
 
                       <div className="flex flex-col gap-2 items-center justify-center p-4 border rounded-md">
                         <div className="relative">
-                          <Image
-                            src="/placeholder.svg?height=80&width=80&text=Cover"
+                          <LazyLoadImage
+                            src="/beauty5.jpg"
                             alt="Cover image"
                             width={80}
                             height={80}
@@ -531,6 +614,7 @@ export default function ProfilePage() {
                             variant="ghost"
                             size="icon"
                             className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-primary text-primary-foreground shadow-sm"
+                            onClick={handleLogoUpload}
                           >
                             <CameraIcon className="h-3 w-3" />
                             <span className="sr-only">Upload cover</span>
@@ -538,62 +622,166 @@ export default function ProfilePage() {
                         </div>
                         <span className="text-sm">Cover Image</span>
                       </div>
+                    </div>
+                  </div>
 
-                      <div className="flex flex-col gap-2 items-center justify-center p-4 border rounded-md">
-                        <div className="relative">
-                          <Image
-                            src="/placeholder.svg?height=80&width=80&text=Favicon"
-                            alt="Favicon"
-                            width={80}
-                            height={80}
-                            className="rounded-md object-cover"
-                          />
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Colors</h3>
+
+                    {/* Hazır Temalar */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium">Hazır Temalar</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {predefinedThemes.map((theme, index) => (
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-primary text-primary-foreground shadow-sm"
+                            key={index}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-2"
+                            onClick={() => applyPredefinedTheme(theme)}
                           >
-                            <CameraIcon className="h-3 w-3" />
-                            <span className="sr-only">Upload favicon</span>
+                            <div className="flex items-center">
+                              <div
+                                className="h-4 w-4 rounded-full"
+                                style={{ backgroundColor: theme.primary }}
+                              ></div>
+                              <div
+                                className="h-4 w-4 rounded-full -ml-1"
+                                style={{ backgroundColor: theme.secondary }}
+                              ></div>
+                            </div>
+                            {theme.name}
                           </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Özel Renkler */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium">Özel Renkler</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="space-y-2">
+                          <Label>Ana Renk</Label>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="h-8 w-8 rounded-md border"
+                              style={{ backgroundColor: colorTheme.primary }}
+                            ></div>
+                            <input
+                              type="color"
+                              value={colorTheme.primary}
+                              onChange={(e) =>
+                                handleColorChange("primary", e.target.value)
+                              }
+                              className="w-full h-8 cursor-pointer"
+                            />
+                          </div>
                         </div>
-                        <span className="text-sm">Favicon</span>
+
+                        <div className="space-y-2">
+                          <Label>İkincil Renk</Label>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="h-8 w-8 rounded-md border"
+                              style={{ backgroundColor: colorTheme.secondary }}
+                            ></div>
+                            <input
+                              type="color"
+                              value={colorTheme.secondary}
+                              onChange={(e) =>
+                                handleColorChange("secondary", e.target.value)
+                              }
+                              className="w-full h-8 cursor-pointer"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Arkaplan</Label>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="h-8 w-8 rounded-md border"
+                              style={{ backgroundColor: colorTheme.background }}
+                            ></div>
+                            <input
+                              type="color"
+                              value={colorTheme.background}
+                              onChange={(e) =>
+                                handleColorChange("background", e.target.value)
+                              }
+                              className="w-full h-8 cursor-pointer"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Metin</Label>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="h-8 w-8 rounded-md border"
+                              style={{ backgroundColor: colorTheme.text }}
+                            ></div>
+                            <input
+                              type="color"
+                              value={colorTheme.text}
+                              onChange={(e) =>
+                                handleColorChange("text", e.target.value)
+                              }
+                              className="w-full h-8 cursor-pointer"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Colors</h3>
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className="h-10 w-10 rounded-full bg-purple-500"></div>
-                        <span className="text-sm mt-1">Primary Color</span>
+                  {/* Renk Önizleme */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Preview</h3>
+                    <div
+                      className="p-6 rounded-lg"
+                      style={{ backgroundColor: colorTheme.background }}
+                    >
+                      <div className="space-y-4">
+                        <h4
+                          className="text-xl font-bold"
+                          style={{ color: colorTheme.text }}
+                        >
+                          Your Business Name
+                        </h4>
+                        <p style={{ color: colorTheme.text }}>
+                          This is how your branding will appear to clients.
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            style={{
+                              backgroundColor: colorTheme.primary,
+                              color: "#ffffff",
+                            }}
+                          >
+                            Primary Button
+                          </Button>
+                          <Button
+                            variant="outline"
+                            style={{
+                              borderColor: colorTheme.secondary,
+                              color: colorTheme.secondary,
+                            }}
+                          >
+                            Secondary Button
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex flex-col items-center">
-                        <div className="h-10 w-10 rounded-full bg-purple-700"></div>
-                        <span className="text-sm mt-1">Secondary Color</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <div className="h-10 w-10 rounded-full bg-gray-100"></div>
-                        <span className="text-sm mt-1">Background</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <div className="h-10 w-10 rounded-full bg-gray-900"></div>
-                        <span className="text-sm mt-1">Text</span>
-                      </div>
-                      <Button variant="outline" size="sm" className="ml-auto">
-                        Customize Colors
-                      </Button>
                     </div>
                   </div>
 
                   <div className="flex justify-end">
-                    <Button>Save Changes</Button>
+                    <Button onClick={saveColorTheme}>Save Changes</Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </TabsContent> */}
+          </TabsContent>
         </Tabs>
       </main>
     </div>

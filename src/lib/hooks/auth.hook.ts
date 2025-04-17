@@ -13,3 +13,25 @@ export const useRegister = () => {
     },
   });
 };
+
+// export const useLogin = () => {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationFn: (user: UserInsert) => authService.login(user),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({
+//         queryKey: ["auth"],
+//       });
+//     },
+//   });
+// }
+
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      queryClient.clear();
+    },
+  });
+};

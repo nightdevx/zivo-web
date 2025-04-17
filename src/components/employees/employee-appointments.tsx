@@ -49,10 +49,10 @@ function EmployeeAppointmentsView({
             <AvatarImage src={staff.avatar} alt={staff.name} />
             <AvatarFallback>{staff.initials}</AvatarFallback>
           </Avatar>
-          <span>{staff.name} - Randevular</span>
+          <span>{staff.name} - Appointments</span>
         </DialogTitle>
         <DialogDescription>
-          Bu personelin tüm randevularını görüntüleyin
+          View all appointments for this staff member
         </DialogDescription>
       </DialogHeader>
 
@@ -65,9 +65,9 @@ function EmployeeAppointmentsView({
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="all">Tümü</TabsTrigger>
-              <TabsTrigger value="confirmed">Onaylı</TabsTrigger>
-              <TabsTrigger value="pending">Bekleyen</TabsTrigger>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
+              <TabsTrigger value="pending">Pending</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -77,12 +77,12 @@ function EmployeeAppointmentsView({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tarih</TableHead>
-                  <TableHead>Saat</TableHead>
-                  <TableHead>Müşteri</TableHead>
-                  <TableHead>Hizmet</TableHead>
-                  <TableHead>Durum</TableHead>
-                  <TableHead>İşlemler</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Service</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -107,14 +107,14 @@ function EmployeeAppointmentsView({
                           variant="outline"
                           className="bg-green-50 text-green-700 hover:bg-green-50 border-green-200"
                         >
-                          Onaylı
+                          Confirmed
                         </Badge>
                       ) : (
                         <Badge
                           variant="outline"
                           className="bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200"
                         >
-                          Bekliyor
+                          Pending
                         </Badge>
                       )}
                     </TableCell>
@@ -124,7 +124,7 @@ function EmployeeAppointmentsView({
                           to={`/dashboard/appointments/$appointmentId`}
                           params={appointment.id}
                         >
-                          Görüntüle
+                          View
                         </Link>
                       </Button>
                     </TableCell>
@@ -136,22 +136,22 @@ function EmployeeAppointmentsView({
         ) : (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <CalendarDays className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium">Randevu Bulunamadı</h3>
+            <h3 className="text-lg font-medium">No Appointments Found</h3>
             <p className="text-muted-foreground mt-1">
-              Bu personel için{" "}
+              No{" "}
               {filter === "all"
                 ? ""
                 : filter === "confirmed"
-                  ? "onaylı "
-                  : "bekleyen "}
-              randevu bulunmamaktadır.
+                  ? "confirmed "
+                  : "pending "}
+              appointments found for this staff member.
             </p>
           </div>
         )}
       </div>
 
       <DialogFooter className="mt-6">
-        <Button onClick={onClose}>Kapat</Button>
+        <Button onClick={onClose}>Close</Button>
       </DialogFooter>
     </>
   );

@@ -25,37 +25,37 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Scissors, Building2, User as UserIcon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { User, UserInsert } from "@/lib/models/users.model";
+import { UserInsert } from "@/lib/models/users.model";
 import { useRegister } from "@/lib/hooks/auth.hook";
 import { toast } from "sonner";
+
 export const Route = createFileRoute("/(auth)/register/")({
   component: RegisterPage,
 });
 
-// Form şeması
 const userFormSchema = z
   .object({
     name: z.string().min(2, {
-      message: "İsim en az 2 karakter olmalıdır.",
+      message: "Name must be at least 2 characters.",
     }),
     email: z.string().email({
-      message: "Lütfen geçerli bir e-posta adresi girin.",
+      message: "Please enter a valid email address.",
     }),
     city: z.string().min(2, {
-      message: "Şehir bilgisi gereklidir.",
+      message: "City is required.",
     }),
     phone: z.string().optional(),
     password: z.string().min(8, {
-      message: "Şifre en az 8 karakter olmalıdır.",
+      message: "Password must be at least 8 characters.",
     }),
     confirmPassword: z.string(),
     terms: z.boolean().refine((val) => val === true, {
-      message: "Kullanım şartlarını kabul etmelisiniz.",
+      message: "You must accept the terms and conditions.",
     }),
     type: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Şifreler eşleşmiyor.",
+    message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
 
@@ -85,7 +85,6 @@ export default function RegisterPage() {
   function onSubmit(values: UserFormValues) {
     setIsLoading(true);
 
-    // Kullanıcı tipini form verilerine ekle ve confirmPassword alanını çıkar
     const { confirmPassword, ...userData } = values;
     const userPayload: Omit<UserInsert, "id" | "created_at"> = {
       ...userData,
@@ -93,22 +92,20 @@ export default function RegisterPage() {
       phone: values.phone || null,
     };
 
-    // Kullanıcıyı oluştur
     register(userPayload, {
       onSuccess: () => {
         setIsLoading(false);
-        toast.success("Kayıt başarılı! Giriş yapabilirsiniz.");
+        toast.success("Registration successful! You can now log in.");
         navigator({ to: "/login" });
       },
       onError: (error) => {
         setIsLoading(false);
-        toast.error("Kayıt hatası! Lütfen tekrar deneyin.");
-        console.error("Kayıt hatası:", error);
+        toast.error("Registration failed! Please try again.");
+        console.error("Registration error:", error);
       },
     });
   }
 
-  // Kullanıcı tipi değiştiğinde form değerini güncelle
   const handleUserTypeChange = (value: string) => {
     setUserType(value as "customer" | "company");
     form.setValue("type", value);
@@ -123,19 +120,19 @@ export default function RegisterPage() {
               <Scissors className="h-6 w-6 text-primary-600" />
             </div>
           </div>
-          <CardTitle className="text-2xl gradient-text">Kayıt Ol</CardTitle>
-          <CardDescription>Beauty Manager hesabı oluşturun</CardDescription>
+          <CardTitle className="text-2xl gradient-text">Sign Up</CardTitle>
+          <CardDescription>Create a Beauty Manager account</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="customer" onValueChange={handleUserTypeChange}>
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="customer" className="flex items-center gap-2">
                 <UserIcon className="h-4 w-4" />
-                Müşteri
+                Customer
               </TabsTrigger>
               <TabsTrigger value="company" className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
-                Salon / İşletme
+                Salon / Business
               </TabsTrigger>
             </TabsList>
 
@@ -150,14 +147,16 @@ export default function RegisterPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        {userType === "customer" ? "Ad Soyad" : "İşletme Adı"}
+                        {userType === "customer"
+                          ? "Full Name"
+                          : "Company Owner Name"}
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder={
                             userType === "customer"
-                              ? "Ayşe Yılmaz"
-                              : "Güzellik Salonu & Spa"
+                              ? "Jane Doe"
+                              : "Beauty Salon & Spa"
                           }
                           className="elegant-input"
                           {...field}
@@ -172,12 +171,12 @@ export default function RegisterPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>E-posta</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
                           placeholder={
                             userType === "customer"
-                              ? "ornek@email.com"
+                              ? "example@email.com"
                               : "info@salon.com"
                           }
                           className="elegant-input"
@@ -194,10 +193,10 @@ export default function RegisterPage() {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Şehir</FormLabel>
+                        <FormLabel>City</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="İstanbul"
+                            placeholder="New York"
                             className="elegant-input"
                             {...field}
                           />
@@ -211,10 +210,10 @@ export default function RegisterPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Telefon (İsteğe Bağlı)</FormLabel>
+                        <FormLabel>Phone (Optional)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="+90 555 123 4567"
+                            placeholder="+1 555 123 4567"
                             className="elegant-input"
                             {...field}
                           />
@@ -229,7 +228,7 @@ export default function RegisterPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Şifre</FormLabel>
+                      <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
@@ -238,7 +237,7 @@ export default function RegisterPage() {
                         />
                       </FormControl>
                       <FormDescription>
-                        En az 8 karakter olmalıdır.
+                        Must be at least 8 characters.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -249,7 +248,7 @@ export default function RegisterPage() {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Şifre Tekrar</FormLabel>
+                      <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
@@ -275,20 +274,21 @@ export default function RegisterPage() {
                       <div className="space-y-1 leading-none">
                         <FormLabel className="text-sm font-normal">
                           <span>
+                            I accept the{" "}
                             <Link
                               to="/"
                               className="text-primary-600 hover:underline"
                             >
-                              Kullanım şartlarını
+                              Terms of Service
                             </Link>{" "}
-                            ve{" "}
+                            and{" "}
                             <Link
                               to="/"
                               className="text-primary-600 hover:underline"
                             >
-                              Gizlilik politikasını
-                            </Link>{" "}
-                            kabul ediyorum.
+                              Privacy Policy
+                            </Link>
+                            .
                           </span>
                         </FormLabel>
                       </div>
@@ -300,7 +300,7 @@ export default function RegisterPage() {
                   className="w-full primary-button"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Kayıt yapılıyor..." : "Kayıt Ol"}
+                  {isLoading ? "Registering..." : "Sign Up"}
                 </Button>
               </form>
             </Form>
@@ -308,12 +308,12 @@ export default function RegisterPage() {
         </CardContent>
         <CardFooter className="flex justify-center border-t p-6">
           <div className="text-sm text-slate-600">
-            Zaten hesabınız var mı?{" "}
+            Already have an account?{" "}
             <Link
               to="/login"
               className="font-medium text-primary-600 hover:underline"
             >
-              Giriş Yap
+              Log In
             </Link>
           </div>
         </CardFooter>

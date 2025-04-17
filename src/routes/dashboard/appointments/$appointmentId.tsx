@@ -30,27 +30,27 @@ const allAppointments = [
     id: 1,
     client: "Ayşe Yılmaz",
     phone: "+90 555 123 4567",
-    service: "Saç Kesimi & Fön",
-    date: "15 Nisan 2025",
+    service: "Haircut & Blow Dry",
+    date: "April 15, 2025",
     time: "10:00 - 11:30",
     status: "confirmed",
     staff: "Zehra",
     initials: "AY",
     avatar: "/placeholder.svg?height=32&width=32",
     email: "ayse@example.com",
-    notes: "Saç uçlarında kırıklar var, özel bakım istiyor.",
+    notes: "Has split ends, requires special care.",
     history: [
       {
-        date: "1 Mart 2025",
-        service: "Saç Kesimi & Fön",
+        date: "March 1, 2025",
+        service: "Haircut & Blow Dry",
         staff: "Zehra",
-        notes: "Kısa model tercih etti.",
+        notes: "Preferred a short style.",
       },
       {
-        date: "15 Ocak 2025",
-        service: "Saç Boyama",
+        date: "January 15, 2025",
+        service: "Hair Coloring",
         staff: "Zehra",
-        notes: "Açık kahve tonları tercih etti.",
+        notes: "Preferred light brown tones.",
       },
     ],
   },
@@ -58,21 +58,21 @@ const allAppointments = [
     id: 2,
     client: "Mehmet Demir",
     phone: "+90 555 234 5678",
-    service: "Sakal Tıraşı",
-    date: "15 Nisan 2025",
+    service: "Beard Trim",
+    date: "April 15, 2025",
     time: "12:00 - 13:00",
     status: "confirmed",
     staff: "Ahmet",
     initials: "MD",
     avatar: "/placeholder.svg?height=32&width=32",
     email: "mehmet@example.com",
-    notes: "Köşeli sakal şekli istiyor.",
+    notes: "Prefers angular beard shape.",
     history: [
       {
-        date: "20 Mart 2025",
-        service: "Sakal Tıraşı & Saç Kesimi",
+        date: "March 20, 2025",
+        service: "Beard Trim & Haircut",
         staff: "Ahmet",
-        notes: "Yanlar kısa, üst kısım uzun.",
+        notes: "Short sides, long top.",
       },
     ],
   },
@@ -80,27 +80,27 @@ const allAppointments = [
     id: 3,
     client: "Zeynep Kaya",
     phone: "+90 555 345 6789",
-    service: "Saç Boyama, Saç Bakımı, Fön",
-    date: "15 Nisan 2025",
+    service: "Hair Coloring, Hair Care, Blow Dry",
+    date: "April 15, 2025",
     time: "14:00 - 15:30",
     status: "pending",
     staff: "Zehra",
     initials: "ZK",
     avatar: "/placeholder.svg?height=32&width=32",
     email: "zeynep@example.com",
-    notes: "Açık kahve tonları tercih ediyor.",
+    notes: "Prefers light brown tones.",
     history: [
       {
-        date: "5 Mart 2025",
-        service: "Saç Bakımı",
+        date: "March 5, 2025",
+        service: "Hair Care",
         staff: "Zehra",
-        notes: "Saç dökülmesi şikayeti var.",
+        notes: "Complains about hair loss.",
       },
       {
-        date: "10 Şubat 2025",
-        service: "Saç Boyama",
+        date: "February 10, 2025",
+        service: "Hair Coloring",
         staff: "Zehra",
-        notes: "Koyu kahve tercih etti.",
+        notes: "Preferred dark brown.",
       },
     ],
   },
@@ -108,21 +108,21 @@ const allAppointments = [
     id: 4,
     client: "Fatma Şahin",
     phone: "+90 555 456 7890",
-    service: "Manikür & Pedikür, Protez Tırnak",
-    date: "15 Nisan 2025",
+    service: "Manicure & Pedicure, Nail Extensions",
+    date: "April 15, 2025",
     time: "16:00 - 17:30",
     status: "pending",
     staff: "Selin",
     initials: "FŞ",
     avatar: "/placeholder.svg?height=32&width=32",
     email: "fatma@example.com",
-    notes: "Uzun oval tırnak şekli tercih ediyor.",
+    notes: "Prefers long oval nail shape.",
     history: [
       {
-        date: "15 Mart 2025",
-        service: "Manikür",
+        date: "March 15, 2025",
+        service: "Manicure",
         staff: "Selin",
-        notes: "Kırmızı oje tercih etti.",
+        notes: "Preferred red nail polish.",
       },
     ],
   },
@@ -130,8 +130,8 @@ const allAppointments = [
     id: 5,
     client: "Ahmet Koç",
     phone: "+90 555 567 8901",
-    service: "Saç Kesimi",
-    date: "8 Nisan 2025",
+    service: "Haircut",
+    date: "April 8, 2025",
     time: "11:00 - 12:00",
     status: "completed",
     staff: "Ahmet",
@@ -145,21 +145,21 @@ const allAppointments = [
     id: 6,
     client: "Sevgi Öztürk",
     phone: "+90 555 678 9012",
-    service: "Saç Boyama & Bakım, Fön, Saç Maskesi",
-    date: "7 Nisan 2025",
+    service: "Hair Coloring & Care, Blow Dry, Hair Mask",
+    date: "April 7, 2025",
     time: "14:00 - 16:30",
     status: "completed",
     staff: "Zehra",
     initials: "SÖ",
     avatar: "/placeholder.svg?height=32&width=32",
     email: "sevgi@example.com",
-    notes: "Saç dökülmesi şikayeti var.",
+    notes: "Complains about hair loss.",
     history: [
       {
-        date: "7 Mart 2025",
-        service: "Saç Bakımı",
+        date: "March 7, 2025",
+        service: "Hair Care",
         staff: "Zehra",
-        notes: "Saç dökülmesi şikayeti var.",
+        notes: "Complains about hair loss.",
       },
     ],
   },
@@ -167,8 +167,8 @@ const allAppointments = [
     id: 7,
     client: "Emir Yıldız",
     phone: "+90 555 789 0123",
-    service: "Sakal Şekillendirme",
-    date: "5 Nisan 2025",
+    service: "Beard Styling",
+    date: "April 5, 2025",
     time: "10:30 - 11:30",
     status: "completed",
     staff: "Ahmet",
@@ -182,355 +182,23 @@ const allAppointments = [
     id: 8,
     client: "Deniz Korkmaz",
     phone: "+90 555 890 1234",
-    service: "Yüz Bakımı, Cilt Temizliği, Maske Uygulaması",
-    date: "3 Nisan 2025",
+    service: "Facial Care, Skin Cleaning, Mask Application",
+    date: "April 3, 2025",
     time: "13:00 - 14:00",
     status: "cancelled",
     staff: "Selin",
     initials: "DK",
     avatar: "/placeholder.svg?height=32&width=32",
     email: "deniz@example.com",
-    notes: "Cilt kuruluğu şikayeti var.",
+    notes: "Complains about dry skin.",
     history: [
       {
-        date: "3 Mart 2025",
-        service: "Cilt Temizliği",
+        date: "March 3, 2025",
+        service: "Skin Cleaning",
         staff: "Selin",
-        notes: "Akne problemi var.",
+        notes: "Has acne problems.",
       },
     ],
-  },
-  // Add staff appointments data
-  {
-    id: 101,
-    client: "Ayşe Yılmaz",
-    phone: "+90 555 123 4567",
-    service: "Saç Kesimi & Fön",
-    date: "15 Nisan 2025",
-    time: "10:00 - 11:30",
-    status: "confirmed",
-    staff: "Zehra",
-    initials: "AY",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "ayse@example.com",
-    notes: "Saç uçlarında kırıklar var, özel bakım istiyor.",
-    history: [
-      {
-        date: "1 Mart 2025",
-        service: "Saç Kesimi & Fön",
-        staff: "Zehra",
-        notes: "Kısa model tercih etti.",
-      },
-    ],
-    customer: "Ayşe Yılmaz",
-    customerInfo: {
-      phone: "+90 555 123 4567",
-      email: "ayse@example.com",
-      notes: "Saç uçlarında kırıklar var, özel bakım istiyor.",
-    },
-  },
-  {
-    id: 102,
-    client: "Fatma Şahin",
-    phone: "+90 555 234 5678",
-    service: "Saç Boyama, Saç Bakımı, Fön",
-    date: "15 Nisan 2025",
-    time: "13:00 - 14:30",
-    status: "confirmed",
-    staff: "Zehra",
-    initials: "FŞ",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "fatma@example.com",
-    notes: "Açık kahve tonları tercih ediyor.",
-    history: [
-      {
-        date: "15 Mart 2025",
-        service: "Saç Bakımı",
-        staff: "Zehra",
-        notes: "Saç dökülmesi şikayeti var.",
-      },
-    ],
-    customer: "Fatma Şahin",
-    customerInfo: {
-      phone: "+90 555 234 5678",
-      email: "fatma@example.com",
-      notes: "Açık kahve tonları tercih ediyor.",
-    },
-  },
-  {
-    id: 103,
-    client: "Zeynep Kaya",
-    phone: "+90 555 345 6789",
-    service: "Fön",
-    date: "16 Nisan 2025",
-    time: "11:00 - 12:00",
-    status: "pending",
-    staff: "Zehra",
-    initials: "ZK",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "zeynep@example.com",
-    notes: "",
-    history: [
-      { date: "16 Mart 2025", service: "Fön", staff: "Zehra", notes: "" },
-    ],
-    customer: "Zeynep Kaya",
-    customerInfo: {
-      phone: "+90 555 345 6789",
-      email: "zeynep@example.com",
-      notes: "",
-    },
-  },
-  {
-    id: 104,
-    client: "Elif Demir",
-    phone: "+90 555 456 7890",
-    service: "Saç Bakımı, Saç Maskesi, Fön",
-    date: "17 Nisan 2025",
-    time: "14:00 - 15:30",
-    status: "confirmed",
-    staff: "Zehra",
-    initials: "ED",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "elif@example.com",
-    notes: "Saç dökülmesi şikayeti var.",
-    history: [
-      {
-        date: "17 Mart 2025",
-        service: "Saç Bakımı",
-        staff: "Zehra",
-        notes: "Saç dökülmesi şikayeti var.",
-      },
-    ],
-    customer: "Elif Demir",
-    customerInfo: {
-      phone: "+90 555 456 7890",
-      email: "elif@example.com",
-      notes: "Saç dökülmesi şikayeti var.",
-    },
-  },
-  {
-    id: 201,
-    client: "Mehmet Demir",
-    phone: "+90 555 567 8901",
-    service: "Sakal Tıraşı",
-    date: "15 Nisan 2025",
-    time: "09:30 - 10:00",
-    status: "confirmed",
-    staff: "Ahmet",
-    initials: "MD",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "mehmet@example.com",
-    notes: "Köşeli sakal şekli istiyor.",
-    history: [
-      {
-        date: "15 Mart 2025",
-        service: "Sakal Tıraşı",
-        staff: "Ahmet",
-        notes: "Köşeli sakal şekli istiyor.",
-      },
-    ],
-    customer: "Mehmet Demir",
-    customerInfo: {
-      phone: "+90 555 567 8901",
-      email: "mehmet@example.com",
-      notes: "Köşeli sakal şekli istiyor.",
-    },
-  },
-  {
-    id: 202,
-    client: "Ali Yıldız",
-    phone: "+90 555 678 9012",
-    service: "Erkek Saç Kesimi, Sakal Şekillendirme",
-    date: "15 Nisan 2025",
-    time: "11:00 - 12:00",
-    status: "confirmed",
-    staff: "Ahmet",
-    initials: "AY",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "ali@example.com",
-    notes: "Yanlar kısa, üst kısım uzun olacak.",
-    history: [
-      {
-        date: "15 Mart 2025",
-        service: "Erkek Saç Kesimi",
-        staff: "Ahmet",
-        notes: "Yanlar kısa, üst kısım uzun olacak.",
-      },
-    ],
-    customer: "Ali Yıldız",
-    customerInfo: {
-      phone: "+90 555 678 9012",
-      email: "ali@example.com",
-      notes: "Yanlar kısa, üst kısım uzun olacak.",
-    },
-  },
-  {
-    id: 203,
-    client: "Ahmet Kara",
-    phone: "+90 555 789 0123",
-    service: "Sakal Tıraşı",
-    date: "16 Nisan 2025",
-    time: "10:00 - 10:30",
-    status: "pending",
-    staff: "Ahmet",
-    initials: "AK",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "ahmet@example.com",
-    notes: "",
-    history: [
-      {
-        date: "16 Mart 2025",
-        service: "Sakal Tıraşı",
-        staff: "Ahmet",
-        notes: "",
-      },
-    ],
-    customer: "Ahmet Kara",
-    customerInfo: {
-      phone: "+90 555 789 0123",
-      email: "ahmet@example.com",
-      notes: "",
-    },
-  },
-  {
-    id: 301,
-    client: "Ayşe Yılmaz",
-    phone: "+90 555 123 4567",
-    service: "Manikür",
-    date: "15 Nisan 2025",
-    time: "10:00 - 11:00",
-    status: "confirmed",
-    staff: "Selin",
-    initials: "AY",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "ayse@example.com",
-    notes: "Pastel tonlarda oje istiyor.",
-    history: [
-      {
-        date: "15 Mart 2025",
-        service: "Manikür",
-        staff: "Selin",
-        notes: "Pastel tonlarda oje istiyor.",
-      },
-    ],
-    customer: "Ayşe Yılmaz",
-    customerInfo: {
-      phone: "+90 555 123 4567",
-      email: "ayse@example.com",
-      notes: "Pastel tonlarda oje istiyor.",
-    },
-  },
-  {
-    id: 302,
-    client: "Zeynep Kaya",
-    phone: "+90 555 345 6789",
-    service: "Manikür & Pedikür, Protez Tırnak",
-    date: "15 Nisan 2025",
-    time: "14:00 - 15:30",
-    status: "confirmed",
-    staff: "Selin",
-    initials: "ZK",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "zeynep@example.com",
-    notes: "Özel tasarım istiyor.",
-    history: [
-      {
-        date: "15 Mart 2025",
-        service: "Manikür",
-        staff: "Selin",
-        notes: "Özel tasarım istiyor.",
-      },
-    ],
-    customer: "Zeynep Kaya",
-    customerInfo: {
-      phone: "+90 555 345 6789",
-      email: "zeynep@example.com",
-      notes: "Özel tasarım istiyor.",
-    },
-  },
-  {
-    id: 303,
-    client: "Fatma Şahin",
-    phone: "+90 555 234 5678",
-    service: "Protez Tırnak",
-    date: "16 Nisan 2025",
-    time: "13:00 - 14:00",
-    status: "pending",
-    staff: "Selin",
-    initials: "FŞ",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "fatma@example.com",
-    notes: "Uzun oval tırnak şekli tercih ediyor.",
-    history: [
-      {
-        date: "16 Mart 2025",
-        service: "Protez Tırnak",
-        staff: "Selin",
-        notes: "Uzun oval tırnak şekli tercih ediyor.",
-      },
-    ],
-    customer: "Fatma Şahin",
-    customerInfo: {
-      phone: "+90 555 234 5678",
-      email: "fatma@example.com",
-      notes: "Uzun oval tırnak şekli tercih ediyor.",
-    },
-  },
-  {
-    id: 401,
-    client: "Zeynep Kaya",
-    phone: "+90 555 345 6789",
-    service: "Yüz Bakımı, Cilt Temizliği, Maske Uygulaması",
-    date: "18 Nisan 2025",
-    time: "10:00 - 11:00",
-    status: "confirmed",
-    staff: "Mehmet",
-    initials: "ZK",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "zeynep@example.com",
-    notes: "Cilt kuruluğu şikayeti var.",
-    history: [
-      {
-        date: "18 Mart 2025",
-        service: "Cilt Temizliği",
-        staff: "Mehmet",
-        notes: "Cilt kuruluğu şikayeti var.",
-      },
-    ],
-    customer: "Zeynep Kaya",
-    customerInfo: {
-      phone: "+90 555 345 6789",
-      email: "zeynep@example.com",
-      notes: "Cilt kuruluğu şikayeti var.",
-    },
-  },
-  {
-    id: 402,
-    client: "Ayşe Yılmaz",
-    phone: "+90 555 123 4567",
-    service: "Cilt Temizliği",
-    date: "19 Nisan 2025",
-    time: "14:00 - 15:00",
-    status: "pending",
-    staff: "Mehmet",
-    initials: "AY",
-    avatar: "/placeholder.svg?height=32&width=32",
-    email: "ayse@example.com",
-    notes: "Akne problemi var.",
-    history: [
-      {
-        date: "19 Mart 2025",
-        service: "Cilt Temizliği",
-        staff: "Mehmet",
-        notes: "Akne problemi var.",
-      },
-    ],
-    customer: "Ayşe Yılmaz",
-    customerInfo: {
-      phone: "+90 555 123 4567",
-      email: "ayse@example.com",
-      notes: "Akne problemi var.",
-    },
   },
 ];
 
@@ -541,7 +209,7 @@ function StatusBadge({ status }: { status: string }) {
         variant="outline"
         className="bg-green-50 text-green-700 hover:bg-green-50 border-green-200"
       >
-        Onaylı
+        Confirmed
       </Badge>
     );
   } else if (status === "pending") {
@@ -550,7 +218,7 @@ function StatusBadge({ status }: { status: string }) {
         variant="outline"
         className="bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200"
       >
-        Bekliyor
+        Pending
       </Badge>
     );
   } else if (status === "completed") {
@@ -559,7 +227,7 @@ function StatusBadge({ status }: { status: string }) {
         variant="outline"
         className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200"
       >
-        Tamamlandı
+        Completed
       </Badge>
     );
   } else if (status === "cancelled") {
@@ -568,7 +236,7 @@ function StatusBadge({ status }: { status: string }) {
         variant="outline"
         className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200"
       >
-        İptal Edildi
+        Cancelled
       </Badge>
     );
   } else if (status === "rejected") {
@@ -577,7 +245,7 @@ function StatusBadge({ status }: { status: string }) {
         variant="outline"
         className="bg-purple-50 text-purple-700 hover:bg-purple-50 border-purple-200"
       >
-        Reddedildi
+        Rejected
       </Badge>
     );
   }
@@ -609,7 +277,7 @@ function AppointmentDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
-        <p>Yükleniyor...</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -617,9 +285,9 @@ function AppointmentDetailPage() {
   if (!appointment) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
-        <p>Randevu bulunamadı.</p>
+        <p>Appointment not found.</p>
         <Button asChild className="mt-4">
-          <Link to="/dashboard/appointments">Randevulara Dön</Link>
+          <Link to="/dashboard/appointments">Back to Appointments</Link>
         </Button>
       </div>
     );
@@ -647,12 +315,15 @@ function AppointmentDetailPage() {
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <h1 className="text-2xl font-bold">Randevu Detayları</h1>
+          <h1 className="text-2xl font-bold">Appointment Details</h1>
           <div className="ml-auto flex items-center gap-2">
             <Button variant="outline" asChild>
-              <Link to={`/dashboard/appointments/edit/${appointment.id}`}>
+              <Link
+                to={`/dashboard/appointments/edit/$appointmentId`}
+                params={{ appointmentId: appointment.id }}
+              >
                 <Edit className="mr-2 h-4 w-4" />
-                Düzenle
+                Edit
               </Link>
             </Button>
           </div>
@@ -661,7 +332,7 @@ function AppointmentDetailPage() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="md:col-span-1">
             <CardHeader>
-              <CardTitle>Müşteri Bilgileri</CardTitle>
+              <CardTitle>Client Information</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-4 mb-6">
@@ -690,7 +361,7 @@ function AppointmentDetailPage() {
                 {notes && (
                   <div className="pt-2">
                     <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Notlar
+                      Notes
                     </h4>
                     <p className="text-sm border rounded-md p-3 bg-muted/50">
                       {notes}
@@ -703,29 +374,29 @@ function AppointmentDetailPage() {
 
           <Card className="md:col-span-1">
             <CardHeader>
-              <CardTitle>Randevu Detayları</CardTitle>
+              <CardTitle>Appointment Details</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Tarih:</span>
+                  <span className="font-medium">Date:</span>
                   <span>{appointment.date}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Saat:</span>
+                  <span className="font-medium">Time:</span>
                   <span>{appointment.time}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Personel:</span>
+                  <span className="font-medium">Staff:</span>
                   <span>{appointment.staff}</span>
                 </div>
                 <Separator />
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
-                    Hizmetler
+                    Services
                   </h4>
                   <div className="space-y-2">
                     {appointment.service
@@ -745,13 +416,13 @@ function AppointmentDetailPage() {
 
         <Tabs defaultValue="history" className="mt-4">
           <TabsList>
-            <TabsTrigger value="history">Geçmiş Randevular</TabsTrigger>
-            <TabsTrigger value="notes">Notlar</TabsTrigger>
+            <TabsTrigger value="history">Past Appointments</TabsTrigger>
+            <TabsTrigger value="notes">Notes</TabsTrigger>
           </TabsList>
           <TabsContent value="history" className="mt-4">
             <Card>
               <CardHeader>
-                <CardTitle>Randevu Geçmişi</CardTitle>
+                <CardTitle>Appointment History</CardTitle>
               </CardHeader>
               <CardContent>
                 {appointment.history && appointment.history.length > 0 ? (
@@ -763,7 +434,7 @@ function AppointmentDetailPage() {
                           <Badge variant="outline">{item.service}</Badge>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          Personel: {item.staff}
+                          Staff: {item.staff}
                         </div>
                         {item.notes && (
                           <div className="mt-2 text-sm">{item.notes}</div>
@@ -774,7 +445,7 @@ function AppointmentDetailPage() {
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                    <p>Geçmiş randevu bulunamadı.</p>
+                    <p>No past appointments found.</p>
                   </div>
                 )}
               </CardContent>
@@ -783,7 +454,7 @@ function AppointmentDetailPage() {
           <TabsContent value="notes" className="mt-4">
             <Card>
               <CardHeader>
-                <CardTitle>Müşteri Notları</CardTitle>
+                <CardTitle>Client Notes</CardTitle>
               </CardHeader>
               <CardContent>
                 {notes ? (
@@ -793,7 +464,7 @@ function AppointmentDetailPage() {
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                    <p>Bu müşteri için not bulunmamaktadır.</p>
+                    <p>No notes available for this client.</p>
                   </div>
                 )}
               </CardContent>
