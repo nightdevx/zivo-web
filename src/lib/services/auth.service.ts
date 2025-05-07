@@ -11,12 +11,10 @@ class AuthService {
       throw error;
     }
   }
-  async register(user: UserInsert) {
+  async register(user: UserInsert): Promise<string> {
     try {
-      console.log("Registering user:", user);
       const response = await API.post("/auth/register", user);
-      console.log("Register response:", response);
-      return response.data;
+      return response.data.user.id;
     } catch (error) {
       console.error("Register error:", error);
       throw error;

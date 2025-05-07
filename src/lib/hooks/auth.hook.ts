@@ -5,7 +5,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const useRegister = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (user: UserInsert) => authService.register(user),
+    mutationFn: async (user: UserInsert) => {
+      const response = await authService.register(user);
+      return response; // Assuming the response contains an `id` field
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["auth"],

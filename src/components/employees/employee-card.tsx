@@ -10,46 +10,57 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Clock, CalendarDays } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Employee } from "@/lib/models/employee.model";
 import {
   useUpdateEmployee,
   useDeleteEmployee,
 } from "@/lib/hooks/employee.hook";
+import DeleteDialog from "../delete-dialog";
+import { useState } from "react";
 
 function EmployeeCard({
   member,
-  onStatusChange,
   onSchedule,
   onEdit,
   onViewAppointments,
 }: {
   member: Employee;
-  onStatusChange: (id: number, status: string) => void;
   onEdit: (member: Employee) => void;
   onSchedule: (member: any) => void;
   onViewAppointments: (member: any) => void;
 }) {
-  const workingDaysCount = Object.values(member.working_days).filter(
-    Boolean
-  ).length;
-
   const { mutate: deleteEmployee } = useDeleteEmployee();
   const { mutate: updateEmployee } = useUpdateEmployee();
 
-  const onDelete = (id: number) => {
-    deleteEmployee(id);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
+
+  const onDeleteDialogOpen = (id: string) => {
+    setDeleteDialogId(id);
+    setDeleteDialogOpen(true);
   };
+  const onDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+    setDeleteDialogId(null);
+  };
+
+  const onDelete = () => {
+    if (deleteDialogId) {
+      deleteEmployee(deleteDialogId);
+    }
+    onDeleteDialogClose();
+  };
+
+  const onStatusChange = (
+    id: string,
+    status: "active" | "quitting" | "vacation" | undefined
+  ) => {
+    updateEmployee({ id, updatedEmployee: { status } });
+  };
+
+  const workingDaysCount = Object.values(member.working_days).filter(
+    Boolean
+  ).length;
 
   return (
     <Card className="overflow-hidden">
@@ -98,16 +109,34 @@ function EmployeeCard({
             <span className="text-muted-foreground">Working:</span>
             <span className="font-medium">{workingDaysCount} days / week</span>
           </div>
-          <div className="pt-2">
-            <span className="text-muted-foreground text-xs">Specialties:</span>
-            <div className="flex flex-wrap gap-1 mt-1">
-              {member.specialties.map((specialty: string) => (
-                <Badge key={specialty} variant="secondary" className="text-xs">
-                  {specialty}
-                </Badge>
-              ))}
+          {member.specialties && member.specialties.length > 0 && (
+            <div className="pt-2">
+              <span className="text-muted-foreground text-xs">
+                Specialties:
+              </span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {member.specialties.map((specialty) =>
+                  typeof specialty === "object" && "id" in specialty ? (
+                    <Badge
+                      key={specialty.id}
+                      variant="secondary"
+                      className="text-xs"
+                    >
+                      {specialty.name}
+                    </Badge>
+                  ) : (
+                    <Badge
+                      key={specialty}
+                      variant="secondary"
+                      className="text-xs"
+                    >
+                      {specialty}
+                    </Badge>
+                  )
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-2 pt-0">
@@ -152,41 +181,25 @@ function EmployeeCard({
             }
             className="w-full h-9 flex items-center justify-center"
           >
-            {member.status === "active" ? "Set On Leave" : "Set Active"}
+            {member.status === "active" ? "Set On Vacation" : "Set Active"}
           </Button>
         </div>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full h-9 flex items-center justify-center text-destructive hover:text-destructive mt-1"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Are you sure you want to delete this employee?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This employee record will be
-                permanently deleted.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => onDelete(member.id)}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full h-9 flex items-center justify-center text-destructive hover:text-destructive mt-1"
+          onClick={() => onDeleteDialogOpen(member.id)}
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete
+        </Button>
+        <DeleteDialog
+          deleteText="employee"
+          isOpen={deleteDialogOpen}
+          setIsOpen={setDeleteDialogOpen}
+          onConfirm={onDelete}
+          onCancel={onDeleteDialogClose}
+        />
       </CardFooter>
     </Card>
   );

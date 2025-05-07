@@ -13,29 +13,16 @@ import EmployeeCard from "@/components/employees/employee-card";
 import EmployeeAppointmentsView from "@/components/employees/employee-appointments";
 import { GetAllEmployeesQueryOptions } from "@/lib/hooks/employee.hook";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { EmptyState } from "@/components/employees/empty-employee";
+import { GetAllServicesQueryOptions } from "@/lib/hooks/service.hook";
 
 export const Route = createFileRoute("/dashboard/employees/")({
   component: EmployeesPage,
   loader: ({ context: { queryClient } }) => {
     queryClient.ensureQueryData(GetAllEmployeesQueryOptions);
+    queryClient.ensureQueryData(GetAllServicesQueryOptions);
   },
 });
-
-// Available services in the salon
-const availableServices = [
-  { value: "haircut", label: "Haircut" },
-  { value: "coloring", label: "Hair Coloring" },
-  { value: "styling", label: "Blow Dry" },
-  { value: "treatment", label: "Hair Treatment" },
-  { value: "beard", label: "Beard Trim" },
-  { value: "manicure", label: "Manicure" },
-  { value: "pedicure", label: "Pedicure" },
-  { value: "nailExt", label: "Nail Extensions" },
-  { value: "facial", label: "Facial" },
-  { value: "skinCleaning", label: "Skin Cleaning" },
-  { value: "makeup", label: "Makeup" },
-  { value: "bridal", label: "Bridal Makeup" },
-];
 
 // Update the staffAppointments data to include multiple services for some appointments
 const staffAppointments = {
@@ -209,6 +196,12 @@ function EmployeesPage() {
   const employeeQuery = useSuspenseQuery(GetAllEmployeesQueryOptions);
   const employeeData = employeeQuery.data;
 
+  const servicesQuery = useSuspenseQuery(GetAllServicesQueryOptions);
+  const availableServices = servicesQuery.data.map((service: any) => ({
+    value: service.id,
+    label: service.name,
+  }));
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStaff, setSelectedStaff] = useState<any>(null);
   const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
@@ -222,34 +215,6 @@ function EmployeesPage() {
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleStatusChange = (id: number, newStatus: string) => {
-    toast("Status updated", {
-      description: `Employee status changed to ${
-        newStatus === "active" ? "active" : "on vacation"
-      }.`,
-    });
-  };
-
-  const handleDeleteStaff = (id: number) => {
-    toast("Employee deleted", {
-      description: "Employee successfully deleted.",
-    });
-  };
-
-  const handleAddStaff = (newStaff: any) => {
-    setIsAddStaffOpen(false);
-    toast("Employee added", {
-      description: "New employee successfully added.",
-    });
-  };
-
-  const handleEditStaff = (updatedStaff: any) => {
-    setIsEditStaffOpen(false);
-    toast("Employee updated", {
-      description: "Employee information successfully updated.",
-    });
-  };
 
   const handleUpdateSchedule = (updatedSchedule: any) => {
     if (!selectedStaff) return;
@@ -274,13 +239,16 @@ function EmployeesPage() {
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Employee Management</h1>
+
           <Dialog open={isAddStaffOpen} onOpenChange={setIsAddStaffOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Employee
-              </Button>
-            </DialogTrigger>
+            {employeeData.length > 0 && (
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Employee
+                </Button>
+              </DialogTrigger>
+            )}
             <DialogContent className="sm:max-w-[600px]">
               <AddEmployeeForm
                 onCancel={() => setIsAddStaffOpen(false)}
@@ -311,70 +279,101 @@ function EmployeesPage() {
           </TabsList>
 
           <TabsContent value="all" className="mt-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredEmployee.map((member) => (
-                <EmployeeCard
-                  key={member.id}
-                  member={member}
-                  onStatusChange={handleStatusChange}
-                  onSchedule={(member) => {
-                    setSelectedStaff(member);
-                    setIsScheduleOpen(true);
+            {filteredEmployee.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredEmployee.map((member) => (
+                  <EmployeeCard
+                    key={member.id}
+                    member={member}
+                    onSchedule={(member) => {
+                      setSelectedStaff(member);
+                      setIsScheduleOpen(true);
+                    }}
+                    onEdit={(member) => {
+                      setSelectedStaff(member);
+                      setIsEditStaffOpen(true);
+                    }}
+                    onViewAppointments={handleViewAppointments}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-10">
+                <EmptyState
+                  onAddEmployee={() => {
+                    setIsAddStaffOpen(true);
                   }}
-                  onEdit={(member) => {
-                    setSelectedStaff(member);
-                    setIsEditStaffOpen(true);
-                  }}
-                  onViewAppointments={handleViewAppointments}
+                  filterActive={searchTerm.length > 0}
+                  filterType={searchTerm.length > 0 ? "search" : ""}
                 />
-              ))}
-            </div>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="active" className="mt-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredEmployee
-                .filter((member) => member.status === "active")
-                .map((member) => (
-                  <EmployeeCard
-                    key={member.id}
-                    member={member}
-                    onStatusChange={handleStatusChange}
-                    onSchedule={(member) => {
-                      setSelectedStaff(member);
-                      setIsScheduleOpen(true);
-                    }}
-                    onEdit={(member) => {
-                      setSelectedStaff(member);
-                      setIsEditStaffOpen(true);
-                    }}
-                    onViewAppointments={handleViewAppointments}
-                  />
-                ))}
-            </div>
+            {filteredEmployee.filter((member) => member.status === "active")
+              .length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredEmployee
+                  .filter((member) => member.status === "active")
+                  .map((member) => (
+                    <EmployeeCard
+                      key={member.id}
+                      member={member}
+                      onSchedule={(member) => {
+                        setSelectedStaff(member);
+                        setIsScheduleOpen(true);
+                      }}
+                      onEdit={(member) => {
+                        setSelectedStaff(member);
+                        setIsEditStaffOpen(true);
+                      }}
+                      onViewAppointments={handleViewAppointments}
+                    />
+                  ))}
+              </div>
+            ) : (
+              <div className="mt-10">
+                <EmptyState
+                  onAddEmployee={() => setIsAddStaffOpen(true)}
+                  filterActive={true}
+                  filterType="Active"
+                />
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="vacation" className="mt-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredEmployee
-                .filter((member) => member.status === "vacation")
-                .map((member) => (
-                  <EmployeeCard
-                    key={member.id}
-                    member={member}
-                    onStatusChange={handleStatusChange}
-                    onSchedule={(member) => {
-                      setSelectedStaff(member);
-                      setIsScheduleOpen(true);
-                    }}
-                    onEdit={(member) => {
-                      setSelectedStaff(member);
-                      setIsEditStaffOpen(true);
-                    }}
-                    onViewAppointments={handleViewAppointments}
-                  />
-                ))}
-            </div>
+            {filteredEmployee.filter((member) => member.status === "vacation")
+              .length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredEmployee
+                  .filter((member) => member.status === "vacation")
+                  .map((member) => (
+                    <EmployeeCard
+                      key={member.id}
+                      member={member}
+                      onSchedule={(member) => {
+                        setSelectedStaff(member);
+                        setIsScheduleOpen(true);
+                      }}
+                      onEdit={(member) => {
+                        setSelectedStaff(member);
+                        setIsEditStaffOpen(true);
+                      }}
+                      onViewAppointments={handleViewAppointments}
+                    />
+                  ))}
+              </div>
+            ) : (
+              <div className="mt-10">
+                <EmptyState
+                  onAddEmployee={() => setIsAddStaffOpen(true)}
+                  filterActive={true}
+                  filterType="On Vacation"
+                />
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 

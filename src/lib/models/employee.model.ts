@@ -1,12 +1,12 @@
 type Employee = {
-  company_id: number;
+  company_id: string;
   email: string;
-  id: number;
+  id: string;
   name: string;
   image: string;
   phone: string;
   role: string;
-  specialties: string[];
+  specialties: string[] | {id:string, name:string}[];
   status: "active" | "quitting" | "vacation";
   working_days: {
     monday: boolean;

@@ -1,25 +1,41 @@
+import { Location } from "./location.model";
 type Company = {
-  address: string;
-  category: string;
-  description: string | null;
   id: number;
   name: string;
+  location: Location;
+  category: string;
+  description: string | null;
+  logo?: string;
+  cover_image?: string;
+  phone_number?: string;
+  website?: string;
+  instagram_url?: string;
+  facebook_url?: string;
+  tiktok_url?: string;
+  youtube_url?: string;
+  x_url?: string;
   opening_hours: JSON;
   user_id: number | null;
 };
+
 type CompanyInsert = {
-  address: string;
+  name: string;
+  location: Location;
   category: string;
   description: string | null;
-  name: string;
+  logo?: string;
+  cover_image?: string;
+  phone_number?: string;
+  website?: string;
+  instagram_url?: string;
+  facebook_url?: string;
+  tiktok_url?: string;
+  youtube_url?: string;
+  x_url?: string;
   opening_hours: JSON;
+  user_id: number | null;
 };
 
-type CompanyUpdate = {
-  address?: string;
-  category?: string;
-  description?: string | null;
-  name?: string;
-  opening_hours?: JSON;
-};
+type CompanyUpdate = Partial<Omit<Company, "id">>;
+
 export type { Company, CompanyInsert, CompanyUpdate };

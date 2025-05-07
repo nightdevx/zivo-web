@@ -27,7 +27,10 @@ async function refreshAccessToken() {
 // Request interceptor: Access token'ı tüm isteklere ekle, ancak /auth/ isteklerinde ekleme
 API.interceptors.request.use(
   async (config) => {
-    if (!config.url?.includes("/auth/")) {
+    if (
+      !config.url?.includes("/auth/") &&
+      !(config.url?.includes("/companies") && config.method?.toLowerCase() === "post")
+    ) {
       const accessKeyStore = useAccessKey();
       let accessToken = accessKeyStore.state;
 

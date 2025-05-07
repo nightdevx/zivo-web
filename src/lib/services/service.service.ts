@@ -12,7 +12,7 @@ class ServiceService {
     }
   }
 
-  async getById(id: number): Promise<Service | null> {
+  async getById(id: string): Promise<Service | null> {
     try {
       const response = await API.get(`/services/${id}`);
       return response.data;
@@ -32,7 +32,7 @@ class ServiceService {
     }
   }
 
-  async update(id: number, service: ServiceUpdate): Promise<Service> {
+  async update(id: string, service: ServiceUpdate): Promise<Service> {
     try {
       const response = await API.put(`/services/${id}`, service);
       return response.data;
@@ -42,7 +42,7 @@ class ServiceService {
     }
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
       await API.delete(`/services/${id}`);
     } catch (error) {

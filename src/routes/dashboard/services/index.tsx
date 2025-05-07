@@ -10,17 +10,38 @@ import { Label } from "@/components/ui/label";
 import { GetAllServicesQueryOptions } from "@/lib/hooks/service.hook";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Service } from "@/lib/models/service.model";
+import { useState } from "react";
 
 export const Route = createFileRoute("/dashboard/services/")({
   component: ServicesPage,
   loader: ({ context: { queryClient } }) => {
     queryClient.ensureQueryData(GetAllServicesQueryOptions);
   },
+  pendingComponent: () => (
+    <div className="flex h-screen w-full items-center justify-center">
+      <div className="flex flex-col items-center justify-center space-y-2">
+        <h1 className="text-2xl font-bold">Loading...</h1>
+        <p className="text-gray-500">Please wait while we load the data.</p>
+      </div>
+    </div>
+  ),
 });
 
 function ServicesPage() {
   const serviceQuery = useSuspenseQuery(GetAllServicesQueryOptions);
   const services: Service[] = serviceQuery.data;
+
+  const [showActive, setShowActive] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredServices = services.filter((service) => {
+    const isActive = showActive ? service.isActive : true;
+    const matchesSearchTerm = service.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    return isActive && matchesSearchTerm;
+  });
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -41,11 +62,17 @@ function ServicesPage() {
               type="search"
               placeholder="Search services..."
               className="pl-8 w-full"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center space-x-2">
-              <Switch id="show-active" defaultChecked />
+              <Switch
+                id="show-active"
+                checked={showActive}
+                onCheckedChange={(checked) => setShowActive(checked)}
+              />
               <Label htmlFor="show-active">Show active only</Label>
             </div>
           </div>
@@ -66,7 +93,7 @@ function ServicesPage() {
                 <CardTitle>All Services</CardTitle>
               </CardHeader>
               <CardContent>
-                <ServicesTable services={services} />
+                <ServicesTable services={filteredServices} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -77,7 +104,7 @@ function ServicesPage() {
                 <CardTitle>Hair Services</CardTitle>
               </CardHeader>
               <CardContent>
-                <ServicesTable services={services} category="hair" />
+                <ServicesTable services={filteredServices} category="hair" />
               </CardContent>
             </Card>
           </TabsContent>
@@ -88,7 +115,7 @@ function ServicesPage() {
                 <CardTitle>Nail Services</CardTitle>
               </CardHeader>
               <CardContent>
-                <ServicesTable services={services} category="nails" />
+                <ServicesTable services={filteredServices} category="nails" />
               </CardContent>
             </Card>
           </TabsContent>
@@ -99,7 +126,10 @@ function ServicesPage() {
                 <CardTitle>Skincare Services</CardTitle>
               </CardHeader>
               <CardContent>
-                <ServicesTable services={services} category="skincare" />
+                <ServicesTable
+                  services={filteredServices}
+                  category="skincare"
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -110,7 +140,7 @@ function ServicesPage() {
                 <CardTitle>Other Services</CardTitle>
               </CardHeader>
               <CardContent>
-                <ServicesTable services={services} category="other" />
+                <ServicesTable services={filteredServices} category="other" />
               </CardContent>
             </Card>
           </TabsContent>

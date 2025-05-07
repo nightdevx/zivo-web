@@ -30,6 +30,9 @@ import { Route as DashboardAppointmentsAppointmentIdImport } from './routes/dash
 import { Route as DashboardServicesNewIndexImport } from './routes/dashboard/services/new/index'
 import { Route as DashboardCampaignsNewIndexImport } from './routes/dashboard/campaigns/new/index'
 import { Route as DashboardAppointmentsNewIndexImport } from './routes/dashboard/appointments/new/index'
+import { Route as DashboardServicesEditIdImport } from './routes/dashboard/services/edit/$id'
+import { Route as DashboardCampaignsReportIdImport } from './routes/dashboard/campaigns/report/$id'
+import { Route as DashboardCampaignsEditIdImport } from './routes/dashboard/campaigns/edit/$id'
 import { Route as DashboardAppointmentsEditAppointmentIdImport } from './routes/dashboard/appointments/edit/$appointmentId'
 
 // Create/Update Routes
@@ -153,6 +156,26 @@ const DashboardAppointmentsNewIndexRoute =
     path: '/appointments/new/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+
+const DashboardServicesEditIdRoute = DashboardServicesEditIdImport.update({
+  id: '/services/edit/$id',
+  path: '/services/edit/$id',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardCampaignsReportIdRoute = DashboardCampaignsReportIdImport.update(
+  {
+    id: '/campaigns/report/$id',
+    path: '/campaigns/report/$id',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any,
+)
+
+const DashboardCampaignsEditIdRoute = DashboardCampaignsEditIdImport.update({
+  id: '/campaigns/edit/$id',
+  path: '/campaigns/edit/$id',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 const DashboardAppointmentsEditAppointmentIdRoute =
   DashboardAppointmentsEditAppointmentIdImport.update({
@@ -284,6 +307,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAppointmentsEditAppointmentIdImport
       parentRoute: typeof DashboardRouteImport
     }
+    '/dashboard/campaigns/edit/$id': {
+      id: '/dashboard/campaigns/edit/$id'
+      path: '/campaigns/edit/$id'
+      fullPath: '/dashboard/campaigns/edit/$id'
+      preLoaderRoute: typeof DashboardCampaignsEditIdImport
+      parentRoute: typeof DashboardRouteImport
+    }
+    '/dashboard/campaigns/report/$id': {
+      id: '/dashboard/campaigns/report/$id'
+      path: '/campaigns/report/$id'
+      fullPath: '/dashboard/campaigns/report/$id'
+      preLoaderRoute: typeof DashboardCampaignsReportIdImport
+      parentRoute: typeof DashboardRouteImport
+    }
+    '/dashboard/services/edit/$id': {
+      id: '/dashboard/services/edit/$id'
+      path: '/services/edit/$id'
+      fullPath: '/dashboard/services/edit/$id'
+      preLoaderRoute: typeof DashboardServicesEditIdImport
+      parentRoute: typeof DashboardRouteImport
+    }
     '/dashboard/appointments/new/': {
       id: '/dashboard/appointments/new/'
       path: '/appointments/new'
@@ -323,6 +367,9 @@ interface DashboardRouteRouteChildren {
   DashboardServicesIndexRoute: typeof DashboardServicesIndexRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardAppointmentsEditAppointmentIdRoute: typeof DashboardAppointmentsEditAppointmentIdRoute
+  DashboardCampaignsEditIdRoute: typeof DashboardCampaignsEditIdRoute
+  DashboardCampaignsReportIdRoute: typeof DashboardCampaignsReportIdRoute
+  DashboardServicesEditIdRoute: typeof DashboardServicesEditIdRoute
   DashboardAppointmentsNewIndexRoute: typeof DashboardAppointmentsNewIndexRoute
   DashboardCampaignsNewIndexRoute: typeof DashboardCampaignsNewIndexRoute
   DashboardServicesNewIndexRoute: typeof DashboardServicesNewIndexRoute
@@ -343,6 +390,9 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardAppointmentsEditAppointmentIdRoute:
     DashboardAppointmentsEditAppointmentIdRoute,
+  DashboardCampaignsEditIdRoute: DashboardCampaignsEditIdRoute,
+  DashboardCampaignsReportIdRoute: DashboardCampaignsReportIdRoute,
+  DashboardServicesEditIdRoute: DashboardServicesEditIdRoute,
   DashboardAppointmentsNewIndexRoute: DashboardAppointmentsNewIndexRoute,
   DashboardCampaignsNewIndexRoute: DashboardCampaignsNewIndexRoute,
   DashboardServicesNewIndexRoute: DashboardServicesNewIndexRoute,
@@ -370,6 +420,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/services': typeof DashboardServicesIndexRoute
   '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/dashboard/appointments/edit/$appointmentId': typeof DashboardAppointmentsEditAppointmentIdRoute
+  '/dashboard/campaigns/edit/$id': typeof DashboardCampaignsEditIdRoute
+  '/dashboard/campaigns/report/$id': typeof DashboardCampaignsReportIdRoute
+  '/dashboard/services/edit/$id': typeof DashboardServicesEditIdRoute
   '/dashboard/appointments/new': typeof DashboardAppointmentsNewIndexRoute
   '/dashboard/campaigns/new': typeof DashboardCampaignsNewIndexRoute
   '/dashboard/services/new': typeof DashboardServicesNewIndexRoute
@@ -392,6 +445,9 @@ export interface FileRoutesByTo {
   '/dashboard/services': typeof DashboardServicesIndexRoute
   '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/dashboard/appointments/edit/$appointmentId': typeof DashboardAppointmentsEditAppointmentIdRoute
+  '/dashboard/campaigns/edit/$id': typeof DashboardCampaignsEditIdRoute
+  '/dashboard/campaigns/report/$id': typeof DashboardCampaignsReportIdRoute
+  '/dashboard/services/edit/$id': typeof DashboardServicesEditIdRoute
   '/dashboard/appointments/new': typeof DashboardAppointmentsNewIndexRoute
   '/dashboard/campaigns/new': typeof DashboardCampaignsNewIndexRoute
   '/dashboard/services/new': typeof DashboardServicesNewIndexRoute
@@ -416,6 +472,9 @@ export interface FileRoutesById {
   '/dashboard/services/': typeof DashboardServicesIndexRoute
   '/dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/dashboard/appointments/edit/$appointmentId': typeof DashboardAppointmentsEditAppointmentIdRoute
+  '/dashboard/campaigns/edit/$id': typeof DashboardCampaignsEditIdRoute
+  '/dashboard/campaigns/report/$id': typeof DashboardCampaignsReportIdRoute
+  '/dashboard/services/edit/$id': typeof DashboardServicesEditIdRoute
   '/dashboard/appointments/new/': typeof DashboardAppointmentsNewIndexRoute
   '/dashboard/campaigns/new/': typeof DashboardCampaignsNewIndexRoute
   '/dashboard/services/new/': typeof DashboardServicesNewIndexRoute
@@ -441,6 +500,9 @@ export interface FileRouteTypes {
     | '/dashboard/services'
     | '/dashboard/settings'
     | '/dashboard/appointments/edit/$appointmentId'
+    | '/dashboard/campaigns/edit/$id'
+    | '/dashboard/campaigns/report/$id'
+    | '/dashboard/services/edit/$id'
     | '/dashboard/appointments/new'
     | '/dashboard/campaigns/new'
     | '/dashboard/services/new'
@@ -462,6 +524,9 @@ export interface FileRouteTypes {
     | '/dashboard/services'
     | '/dashboard/settings'
     | '/dashboard/appointments/edit/$appointmentId'
+    | '/dashboard/campaigns/edit/$id'
+    | '/dashboard/campaigns/report/$id'
+    | '/dashboard/services/edit/$id'
     | '/dashboard/appointments/new'
     | '/dashboard/campaigns/new'
     | '/dashboard/services/new'
@@ -484,6 +549,9 @@ export interface FileRouteTypes {
     | '/dashboard/services/'
     | '/dashboard/settings/'
     | '/dashboard/appointments/edit/$appointmentId'
+    | '/dashboard/campaigns/edit/$id'
+    | '/dashboard/campaigns/report/$id'
+    | '/dashboard/services/edit/$id'
     | '/dashboard/appointments/new/'
     | '/dashboard/campaigns/new/'
     | '/dashboard/services/new/'
@@ -541,6 +609,9 @@ export const routeTree = rootRoute
         "/dashboard/services/",
         "/dashboard/settings/",
         "/dashboard/appointments/edit/$appointmentId",
+        "/dashboard/campaigns/edit/$id",
+        "/dashboard/campaigns/report/$id",
+        "/dashboard/services/edit/$id",
         "/dashboard/appointments/new/",
         "/dashboard/campaigns/new/",
         "/dashboard/services/new/"
@@ -601,6 +672,18 @@ export const routeTree = rootRoute
     },
     "/dashboard/appointments/edit/$appointmentId": {
       "filePath": "dashboard/appointments/edit/$appointmentId.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/campaigns/edit/$id": {
+      "filePath": "dashboard/campaigns/edit/$id.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/campaigns/report/$id": {
+      "filePath": "dashboard/campaigns/report/$id.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/services/edit/$id": {
+      "filePath": "dashboard/services/edit/$id.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/appointments/new/": {

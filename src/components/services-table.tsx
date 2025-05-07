@@ -17,9 +17,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Service } from "@/lib/models/service.model";
-import { Clock, Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import { useUpdateService, useDeleteService } from "@/lib/hooks/service.hook";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
+import DeleteDialog from "./delete-dialog";
+import { useState } from "react";
 
 interface ServicesTableProps {
   category?: string;
@@ -27,8 +30,11 @@ interface ServicesTableProps {
 }
 
 export function ServicesTable({ category, services }: ServicesTableProps) {
+  const navigate = useNavigate();
   const { mutate: updateService } = useUpdateService();
   const { mutate: deleteService } = useDeleteService();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<string | null>(null);
 
   // Filter services by category if provided
   const filteredServices = category
@@ -36,7 +42,7 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
     : services;
 
   // Handle service status change
-  const handleStatusChange = (serviceId: number, isActive: boolean) => {
+  const handleStatusChange = (serviceId: string, isActive: boolean) => {
     updateService(
       { id: serviceId, service: { isActive } },
       {
@@ -51,17 +57,21 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
   };
 
   // Handle service deletion
-  const handleDeleteService = (serviceId: number) => {
-    if (confirm("Are you sure you want to delete this service?")) {
-      deleteService(serviceId , {
-        onSuccess: () => {
-          toast.success("Service deleted successfully.");
-        },
-        onError: () => {
-          toast.error("Failed to delete service.");
-        },
-      });
-    }
+  const handleDeleteService = (serviceId: string) => {
+    deleteService(serviceId, {
+      onSuccess: () => {
+        toast.success("Service deleted successfully.");
+      },
+      onError: () => {
+        toast.error("Failed to delete service.");
+      },
+    });
+  };
+
+  // Handle delete button click
+  const handleDeleteButtonClick = (serviceId: string) => {
+    setServiceToDelete(serviceId);
+    setDeleteDialogOpen(true);
   };
 
   return (
@@ -81,10 +91,23 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
           {filteredServices.map((service) => (
             <TableRow key={service.id}>
               <TableCell className="font-medium">{service.name}</TableCell>
-              <TableCell>{service.category}</TableCell>
-              <TableCell className="flex items-center">
-                <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                {`${Math.floor(Number(service.duration) / 60)} hour ${Number(service.duration) % 60} min`}
+              <TableCell>
+                {service.category === "hair"
+                  ? "Hair"
+                  : service.category === "nails"
+                    ? "Nails"
+                    : service.category === "skincare"
+                      ? "Skincare"
+                      : service.category === "makeup"
+                        ? "Makeup"
+                        : "Other"}
+              </TableCell>
+              <TableCell>
+                {`${Math.floor(Number(service.duration) / 60) > 0 ? `${Math.floor(Number(service.duration) / 60)} hour ` : ""}${
+                  Number(service.duration) % 60 > 0
+                    ? `${Number(service.duration) % 60} min`
+                    : ""
+                }`}
               </TableCell>
               <TableCell>{service.price} ₺</TableCell>
               <TableCell>
@@ -96,7 +119,9 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
                       handleStatusChange(service.id, checked)
                     }
                   />
-                  <span>{service.isActive ? "Active" : "Inactive"}</span>
+                  <span className="text-sm font-medium text-muted-foreground inline-block w-[70px]">
+                    {service.isActive ? "Active" : "Inactive"}
+                  </span>
                 </div>
               </TableCell>
               <TableCell className="text-right">
@@ -109,14 +134,23 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate({
+                          to: `/dashboard/services/edit/$id`,
+                          params: { id: String(service.id) },
+                        })
+                      }
+                    >
                       <Edit className="mr-2 h-4 w-4" />
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="text-destructive focus:text-destructive"
-                      onClick={() => handleDeleteService(service.id)}
+                      onClick={() =>
+                        handleDeleteButtonClick(String(service.id))
+                      }
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete
@@ -128,6 +162,19 @@ export function ServicesTable({ category, services }: ServicesTableProps) {
           ))}
         </TableBody>
       </Table>
+      <DeleteDialog
+        deleteText="service"
+        isOpen={deleteDialogOpen}
+        setIsOpen={setDeleteDialogOpen}
+        onConfirm={() => {
+          if (serviceToDelete) {
+            handleDeleteService(serviceToDelete);
+          }
+        }}
+        onCancel={() => {
+          setServiceToDelete(null);
+        }}
+      />
     </div>
   );
 }

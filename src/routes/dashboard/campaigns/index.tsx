@@ -1,23 +1,76 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Search } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import ActiveCampaignTab from "@/components/campaigns/active-campaign-tab";
+import { useState } from "react";
+import UpcomingCampaignTab from "@/components/campaigns/upcoming-campaign-tab";
+import PastCampaignTab from "@/components/campaigns/past-campaign-tab";
 
 export const Route = createFileRoute("/dashboard/campaigns/")({
   component: CampaignsPage,
 });
+interface Campaign {
+  id?: string;
+  title: string;
+  description: string;
+  validUntil: string;
+  daysLeft: number;
+  services: string;
+  usedCount: number;
+  progress: number;
+  type: "active" | "upcoming" | "past";
+}
 
 function CampaignsPage() {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([
+    {
+      id: "1",
+      title: "Summer Special: 20% Off Hair Coloring",
+      description: "Valid until: 30 Nisan 2025",
+      validUntil: "30 Nisan 2025",
+      daysLeft: 15,
+      services: "Hair Coloring",
+      usedCount: 65,
+      progress: 65,
+      type: "active",
+    },
+    {
+      id: "2",
+      title: "Refer a Friend: Both Get 15% Off",
+      description: "Valid until: 10 Mayıs 2025",
+      validUntil: "10 Mayıs 2025",
+      daysLeft: 25,
+      services: "All Services",
+      usedCount: 30,
+      progress: 30,
+      type: "active",
+    },
+    {
+      id: "3",
+      title: "Spring Manicure Special",
+      description: "Starts: 1 Mayıs 2025",
+      validUntil: "1 Mayıs 2025",
+      daysLeft: 15,
+      services: "Manicure, Pedicure",
+      usedCount: 0,
+      progress: 0,
+      type: "upcoming",
+    },
+    {
+      id: "4",
+      title: "New Client Package: Free Consultation",
+      description: "Ended: 1 Nisan 2025",
+      validUntil: "1 Nisan 2025",
+      daysLeft: 0,
+      services: "All Services",
+      usedCount: 120,
+      progress: 100,
+      type: "past",
+    },
+  ]);
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -49,184 +102,25 @@ function CampaignsPage() {
             <TabsTrigger value="past">Past</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="mt-4 space-y-4">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Summer Special: 20% Off Hair Coloring</CardTitle>
-                    <CardDescription>
-                      Valid until: 30 Nisan 2025
-                    </CardDescription>
-                  </div>
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-0">
-                    15 days left
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm">
-                    <div>
-                      <span className="font-medium">Services:</span> Hair
-                      Coloring, Highlights, Balayage
-                    </div>
-                    <div>
-                      <span className="font-medium">Used:</span> 65 times
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>Campaign progress</span>
-                      <span>65%</span>
-                    </div>
-                    <Progress value={65} className="h-2" />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
-                    <Button variant="destructive" size="sm">
-                      End Campaign
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <ActiveCampaignTab
+            campaigns={campaigns.filter(
+              (campaign) => campaign.type === "active"
+            )}
+            onEnd={() => {}}
+          />
 
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Refer a Friend: Both Get 15% Off</CardTitle>
-                    <CardDescription>
-                      Valid until: 10 Mayıs 2025
-                    </CardDescription>
-                  </div>
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-0">
-                    25 days left
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm">
-                    <div>
-                      <span className="font-medium">Services:</span> All
-                      Services
-                    </div>
-                    <div>
-                      <span className="font-medium">Used:</span> 30 times
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>Campaign progress</span>
-                      <span>30%</span>
-                    </div>
-                    <Progress value={30} className="h-2" />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
-                    <Button variant="destructive" size="sm">
-                      End Campaign
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <UpcomingCampaignTab
+            campaigns={campaigns.filter(
+              (campaign) => campaign.type === "upcoming"
+            )}
+            onCancel={() => {}}
+          />
 
-          <TabsContent value="upcoming" className="mt-4 space-y-4">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Spring Manicure Special</CardTitle>
-                    <CardDescription>Starts: 1 Mayıs 2025</CardDescription>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200"
-                  >
-                    Starts in 15 days
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-sm">
-                    <div>
-                      <span className="font-medium">Services:</span> Manicure,
-                      Pedicure
-                    </div>
-                    <div>
-                      <span className="font-medium">Discount:</span> 25% off all
-                      nail services
-                    </div>
-                    <div>
-                      <span className="font-medium">Duration:</span> 30 days
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
-                    <Button variant="destructive" size="sm">
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="past" className="mt-4 space-y-4">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>New Client Package: Free Consultation</CardTitle>
-                    <CardDescription>Ended: 1 Nisan 2025</CardDescription>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="bg-gray-100 text-gray-800 hover:bg-gray-100 border-0"
-                  >
-                    Completed
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm">
-                    <div>
-                      <span className="font-medium">Services:</span> All
-                      Services
-                    </div>
-                    <div>
-                      <span className="font-medium">Used:</span> 120 times
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>Campaign results</span>
-                      <span>100%</span>
-                    </div>
-                    <Progress value={100} className="h-2" />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm">
-                      View Report
-                    </Button>
-                    <Button size="sm">Reactivate</Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <PastCampaignTab
+            campaigns={campaigns.filter((campaign) => campaign.type === "past")}
+            onViewReport={() => {}}
+            onReactivate={() => {}}
+          />
         </Tabs>
       </main>
     </div>

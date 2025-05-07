@@ -22,7 +22,7 @@ export const useGetAllServices = () => {
   });
 };
 // Hook to fetch a service by ID
-export const GetServiceByIdQueryOptions = (id: number) => {
+export const GetServiceByIdQueryOptions = (id: string) => {
   return queryOptions({
     queryKey: ["service", id],
     queryFn: () => ServiceService.getById(id),
@@ -36,6 +36,7 @@ export const useCreateService = () => {
     mutationFn: (service: ServiceInsert) => ServiceService.create(service),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
+      queryClient.refetchQueries({ queryKey: ["services"] });
     },
   });
 };
@@ -43,17 +44,20 @@ export const useCreateService = () => {
 export const useUpdateService = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, service }: { id: number; service: ServiceUpdate }) =>
+    mutationFn: ({ id, service }: { id: string; service: ServiceUpdate }) =>
       ServiceService.update(id, service),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
+      queryClient.invalidateQueries({ queryKey: ["service"] });
+      queryClient.refetchQueries({ queryKey: ["services"] });
     },
   });
 };
+
 export const useDeleteService = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => ServiceService.delete(id),
+    mutationFn: (id: string) => ServiceService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
     },

@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -58,7 +56,7 @@ const formSchema = z.object({
 
 export default function NewServicePage() {
   const { mutateAsync: createService } = useCreateService();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,8 +70,6 @@ export default function NewServicePage() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-
     createService(values, {
       onSuccess: () => {
         toast.success("Service created successfully!");
@@ -140,13 +136,11 @@ export default function NewServicePage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="hair">Saç</SelectItem>
-                            <SelectItem value="nails">Tırnak</SelectItem>
-                            <SelectItem value="skincare">
-                              Cilt Bakımı
-                            </SelectItem>
-                            <SelectItem value="makeup">Makyaj</SelectItem>
-                            <SelectItem value="other">Diğer</SelectItem>
+                            <SelectItem value="hair">Hair</SelectItem>
+                            <SelectItem value="nails">Nails</SelectItem>
+                            <SelectItem value="skincare">Skincare</SelectItem>
+                            <SelectItem value="makeup">Makeup</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
