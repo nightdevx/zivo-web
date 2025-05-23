@@ -3,10 +3,11 @@ type Employee = {
   email: string;
   id: string;
   name: string;
-  image: string;
+  profile_image?: string;
+  profile_image_url?: string;
   phone: string;
   role: string;
-  specialties: string[] | {id:string, name:string}[];
+  specialties: string[] | { id: string; name: string }[];
   status: "active" | "quitting" | "vacation";
   working_days: {
     monday: boolean;
@@ -30,6 +31,7 @@ type EmployeeCreate = {
   name: string;
   phone: string;
   role: string;
+  profile_image?: string;
   specialties: string[];
   status?: "active" | "quitting" | "vacation";
 };
@@ -56,6 +58,7 @@ type EmployeeUpdate = {
     breakStart?: string;
     breakEnd?: string;
   };
+  profile_image?: string;
 };
 
 export type { Employee, EmployeeCreate, EmployeeUpdate };

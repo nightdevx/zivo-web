@@ -1,5 +1,4 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
 import { createFileRoute } from "@tanstack/react-router";
 import GeneralTab from "@/components/settings/general-tab";
 import NotificationsTab from "@/components/settings/notifications-tab";

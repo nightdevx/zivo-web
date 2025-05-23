@@ -31,7 +31,7 @@ export const useCreateUser = () => {
 // Hook to update a user
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  return useMutation<User, unknown, { id: number; userData: UserUpdate }>({
+  return useMutation<User, unknown, { id: string; userData: UserUpdate }>({
     mutationFn: ({ id, userData }) => UsersService.updateUser(id, userData),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -43,7 +43,7 @@ export const useUpdateUser = () => {
 // Hook to delete a user
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, unknown, number>({
+  return useMutation<void, unknown, string>({
     mutationFn: UsersService.deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

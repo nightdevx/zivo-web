@@ -2,12 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Send } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
 import ContactInfoBox from "@/components/messages/contact-info-box";
@@ -17,12 +14,7 @@ import MessageArea from "@/components/messages/message-area";
 export const Route = createFileRoute("/dashboard/messages/")({
   component: MessagesPage,
 });
-interface Message {
-  id: string;
-  sender: "client" | "staff";
-  text: string;
-  time: string;
-}
+
 function MessagesPage() {
   const [activeChat, setActiveChat] = useState<string | null>("1");
   const [message, setMessage] = useState("");

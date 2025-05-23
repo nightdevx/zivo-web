@@ -48,7 +48,7 @@ function ForgotPasswordPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(_: z.infer<typeof formSchema>) {
     setIsLoading(true);
 
     // Simulate API call

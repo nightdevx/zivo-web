@@ -11,20 +11,14 @@ import EnhancedMapComponent from "./map-selector";
 import { Location } from "@/lib/models/location.model";
 
 export default function MapPopup({
-  selectedLocation,
   open,
   setOpen,
-  onPlaceSelected,
 }: {
-  selectedLocation: Location | null;
+  selectedLocation?: Location | null;
   open: boolean;
   setOpen: (open: boolean) => void;
   onPlaceSelected: (location: Location) => void;
 }) {
-  const handleLocationSelect = (location: Location) => {
-    onPlaceSelected(location); // Call the parent function with the selected location
-  };
-
   return (
     <div className="flex flex-col items-start gap-4">
       <Dialog open={open} onOpenChange={setOpen}>
@@ -39,10 +33,7 @@ export default function MapPopup({
             <DialogTitle>Select a Location</DialogTitle>
           </DialogHeader>
           <div className="h-[600px]">
-            <EnhancedMapComponent
-              selectedPlace={selectedLocation ?? undefined} // Pass the selected location to the map component
-              onLocationSelect={handleLocationSelect} // Pass the selected location to the parent component
-            />
+            <EnhancedMapComponent />
           </div>
         </DialogContent>
       </Dialog>

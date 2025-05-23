@@ -9,8 +9,70 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import ImageSelect from "./image-select";
 import ColorThemeSelect from "./color-theme-select";
+import { useState, useEffect } from "react";
+import { useUpdateMyCompany } from "@/lib/hooks/companies.hook";
+import { useUploadFile } from "@/lib/hooks/file.hook";
+import { toast } from "sonner";
 
-const BrandingTab: React.FC = () => {
+interface BrandingTabProps {
+  initialLogoUrl?: string;
+  initialCoverImageUrl?: string;
+}
+
+const BrandingTab: React.FC<BrandingTabProps> = ({
+  initialLogoUrl,
+  initialCoverImageUrl,
+}) => {
+  const [logo, setLogo] = useState<File | null>(null);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(initialLogoUrl || null);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(
+    initialCoverImageUrl || null
+  );
+  const { mutate: updateMyCompany } = useUpdateMyCompany();
+  const { mutate: uploadFile } = useUploadFile();
+
+  const handleUpload = (file: File | null, type: "logo" | "cover_image") => {
+    if (file) {
+      uploadFile(file, {
+        onSuccess: (response) => {
+          console.log("File uploaded successfully:", response);
+          console.log("File path:", response);
+          console.log("File type:", type);
+          updateMyCompany(
+            {
+              companyData: {
+                [type]: response,
+              },
+            },
+            {
+              onSuccess: () => {
+                toast.success("Company images successfully updated!");
+              },
+              onError: () => {
+                toast.error("Company image updates failed!");
+              },
+            }
+          );
+        },
+      });
+    }
+  };
+
+  const handleSaveChanges = () => {
+    handleUpload(logo, "logo");
+    handleUpload(coverImage, "cover_image");
+  };
+
+  useEffect(() => {
+    if (initialLogoUrl) {
+      setLogoUrl(initialLogoUrl);
+    }
+    if (initialCoverImageUrl) {
+      setCoverImageUrl(initialCoverImageUrl);
+    }
+  }, [initialLogoUrl, initialCoverImageUrl]);
+
   return (
     <TabsContent value="branding">
       <Card>
@@ -25,123 +87,26 @@ const BrandingTab: React.FC = () => {
             <div className="space-y-2">
               <h3 className="text-lg font-medium">Logo & Images</h3>
               <div className="grid gap-4 md:grid-cols-2">
-                <ImageSelect label="Logo" selectedImage="/zivologo.jpg" />
+                <ImageSelect
+                  label="Logo"
+                  selectedImage={logo}
+                  setSelectedImage={setLogo}
+                  imageUrl={logoUrl || undefined} // Pass the URL to ImageSelect
+                />
 
-                <ImageSelect label="Cover Image" selectedImage="/beauty5.jpg" />
+                <ImageSelect
+                  label="Cover Image"
+                  selectedImage={coverImage}
+                  setSelectedImage={setCoverImage}
+                  imageUrl={coverImageUrl || undefined} // Pass the URL to ImageSelect
+                />
               </div>
             </div>
 
-            {/* <div className="space-y-4">
-              <h3 className="text-lg font-medium">Colors</h3>
-
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium">Predefined Themes</h4>
-                <div className="flex flex-wrap gap-2">
-                  {predefinedThemes.map((theme, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2"
-                      onClick={() => applyPredefinedTheme(theme)}
-                    >
-                      <div className="flex items-center">
-                        <div
-                          className="h-4 w-4 rounded-full"
-                          style={{ backgroundColor: theme.primary }}
-                        ></div>
-                        <div
-                          className="h-4 w-4 rounded-full -ml-1"
-                          style={{ backgroundColor: theme.secondary }}
-                        ></div>
-                      </div>
-                      {theme.name}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium">Custom Colors</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label>Primary Color</Label>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-8 w-8 rounded-md border"
-                        style={{ backgroundColor: colorTheme.primary }}
-                      ></div>
-                      <input
-                        type="color"
-                        value={colorTheme.primary}
-                        onChange={(e) =>
-                          handleColorChange("primary", e.target.value)
-                        }
-                        className="w-full h-8 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Secondary Color</Label>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-8 w-8 rounded-md border"
-                        style={{ backgroundColor: colorTheme.secondary }}
-                      ></div>
-                      <input
-                        type="color"
-                        value={colorTheme.secondary}
-                        onChange={(e) =>
-                          handleColorChange("secondary", e.target.value)
-                        }
-                        className="w-full h-8 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Background</Label>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-8 w-8 rounded-md border"
-                        style={{ backgroundColor: colorTheme.background }}
-                      ></div>
-                      <input
-                        type="color"
-                        value={colorTheme.background}
-                        onChange={(e) =>
-                          handleColorChange("background", e.target.value)
-                        }
-                        className="w-full h-8 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Text</Label>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-8 w-8 rounded-md border"
-                        style={{ backgroundColor: colorTheme.text }}
-                      ></div>
-                      <input
-                        type="color"
-                        value={colorTheme.text}
-                        onChange={(e) =>
-                          handleColorChange("text", e.target.value)
-                        }
-                        className="w-full h-8 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <ColorThemeSelect />
 
             <div className="flex justify-end">
-              <Button>Save Changes</Button>
+              <Button onClick={handleSaveChanges}>Save Changes</Button>
             </div>
           </div>
         </CardContent>

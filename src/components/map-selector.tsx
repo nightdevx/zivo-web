@@ -1,28 +1,27 @@
-const libraries: Libraries = ["marker", "places"];
-
 import { useRef, useState, useEffect } from "react";
 import { GoogleMap, LoadScript, Libraries } from "@react-google-maps/api";
 import { Button } from "@/components/ui/button";
 import { MapPin, Locate } from "lucide-react";
 import { toast } from "sonner";
+import {
+  useGetMyLocation,
+  useUpdateMyLocation,
+  useCreateLocation,
+} from "@/lib/hooks/location.hook";
 import { Location } from "@/lib/models/location.model";
 
-// Declare the google variable
 declare global {
   interface Window {
     google: any;
   }
 }
 
-interface EnhancedMapComponentProps {
-  selectedPlace?: Location;
-  onLocationSelect: (location: Location) => void;
-}
+const libraries: Libraries = ["marker", "places"];
 
-export default function EnhancedMapComponent({
-  selectedPlace,
-  onLocationSelect,
-}: EnhancedMapComponentProps) {
+export default function EnhancedMapComponent() {
+  const { data: myLocation } = useGetMyLocation();
+  const { mutate: updateMyLocation } = useUpdateMyLocation();
+  const { mutate: createLocation } = useCreateLocation();
   const mapRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(
     null
@@ -33,29 +32,14 @@ export default function EnhancedMapComponent({
   } | null>(null);
   const [address, setAddress] = useState<string>("");
 
-  // Initialize with Turkey's center coordinates
-  const defaultCenter = selectedLocation || {
-    lat: 39.9334,
-    lng: 32.8597,
+  const defaultCenter = {
+    lat: myLocation?.latitude ?? 39.9334,
+    lng: myLocation?.longitude ?? 32.8597,
   };
 
-  const handleMapClick = async (e: google.maps.MapMouseEvent) => {
-    if (!e.latLng) return;
-
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
-
-    // Harita merkezini güncelle
-    if (mapRef.current) {
-      mapRef.current.setCenter({ lat, lng });
-    }
-
-    // Marker pozisyonunu güncelle
-    if (markerRef.current) {
-      markerRef.current.position = new google.maps.LatLng(lat, lng);
-    } else if (mapRef.current) {
-      const pin = document.createElement("div");
-      pin.innerHTML = `
+  const createCustomMarker = (lat: number, lng: number, title: string) => {
+    const pin = document.createElement("div");
+    pin.innerHTML = `
       <div class="flex flex-col items-center">
         <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -67,90 +51,57 @@ export default function EnhancedMapComponent({
       </div>
     `;
 
-      const marker = new google.maps.marker.AdvancedMarkerElement({
-        map: mapRef.current,
-        position: { lat, lng },
-        title: "Selected Location",
-        content: pin,
-      });
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      map: mapRef.current,
+      position: { lat, lng },
+      title,
+      content: pin,
+    });
 
-      markerRef.current = marker;
+    markerRef.current = marker;
+  };
+
+  const updateMarkerAndAddress = async (lat: number, lng: number) => {
+    if (mapRef.current) {
+      mapRef.current.setCenter({ lat, lng });
     }
 
-    // Seçilen konumu güncelle
+    if (markerRef.current) {
+      markerRef.current.position = new google.maps.LatLng(lat, lng);
+    } else {
+      createCustomMarker(lat, lng, "Selected Location");
+    }
+
     setSelectedLocation({ lat, lng });
 
-    // Adres bilgisini al
     try {
       const geocoder = new window.google.maps.Geocoder();
       const response = await geocoder.geocode({ location: { lat, lng } });
 
-      if (response.results[0]) {
-        setAddress(response.results[0].formatted_address);
-      } else {
-        setAddress("Address not found");
-      }
+      setAddress(response.results[0]?.formatted_address || "Address not found");
     } catch (error) {
       console.error("Geocoding error:", error);
       setAddress("Error getting address");
     }
   };
 
+  const handleMapClick = (e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      updateMarkerAndAddress(lat, lng);
+    }
+  };
+
   const getUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-
-          // Update map center and zoom
+          updateMarkerAndAddress(lat, lng);
           if (mapRef.current) {
-            mapRef.current.setCenter({ lat, lng });
             mapRef.current.setZoom(15);
-          }
-
-          if (markerRef.current) {
-            markerRef.current.position = new google.maps.LatLng(lat, lng);
-          } else if (mapRef.current) {
-            // Create a new marker with custom styling
-            const pin = document.createElement("div");
-            pin.innerHTML = `
-              <div class="flex flex-col items-center">
-                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                </div>
-                <div class="w-2 h-2 bg-primary rotate-45 -mt-1"></div>
-              </div>
-            `;
-
-            const marker = new google.maps.marker.AdvancedMarkerElement({
-              map: mapRef.current,
-              position: { lat, lng },
-              title: "Your Location",
-              content: pin,
-            });
-
-            markerRef.current = marker;
-          }
-
-          setSelectedLocation({ lat, lng });
-
-          // Get address from coordinates
-          try {
-            const geocoder = new window.google.maps.Geocoder();
-            const response = await geocoder.geocode({ location: { lat, lng } });
-
-            if (response.results[0]) {
-              setAddress(response.results[0].formatted_address);
-            } else {
-              setAddress("Address not found");
-            }
-          } catch (error) {
-            console.error("Geocoding error:", error);
-            setAddress("Error getting address");
           }
         },
         (error) => {
@@ -170,12 +121,18 @@ export default function EnhancedMapComponent({
 
   const confirmLocation = () => {
     if (selectedLocation && address) {
-      onLocationSelect({
-        company_id: "", // Provide a default or dynamic value for company_id
+      const locationData: Location = {
         latitude: selectedLocation.lat,
         longitude: selectedLocation.lng,
         address,
-      });
+      };
+
+      if (myLocation) {
+        updateMyLocation({ locationData });
+      } else {
+        createLocation(locationData);
+      }
+
       toast("Location selected", {
         description: "Your location has been successfully updated.",
       });
@@ -185,22 +142,25 @@ export default function EnhancedMapComponent({
       });
     }
   };
-
-  // Clean up marker when component unmounts
   useEffect(() => {
-    setSelectedLocation({
-      lat: selectedPlace?.latitude ?? defaultCenter.lat,
-      lng: selectedPlace?.longitude ?? defaultCenter.lng,
-    });
-    setAddress(selectedPlace?.address ?? "");
+    if (myLocation) {
+      const { latitude, longitude, address } = myLocation;
 
-    return () => {
-      if (markerRef.current) {
-        markerRef.current.map = null;
-        markerRef.current = null;
-      }
-    };
-  }, []);
+      setSelectedLocation({
+        lat: latitude,
+        lng: longitude,
+      });
+      setAddress(address);
+
+      // Marker oluşturmayı geciktir
+      setTimeout(() => {
+        if (mapRef.current) {
+          createCustomMarker(latitude, longitude, "My Location");
+          mapRef.current.setCenter({ lat: latitude, lng: longitude });
+        }
+      }, 100); // 100ms gecikme
+    }
+  }, [myLocation]);
 
   return (
     <div className="flex flex-col w-full h-full gap-4">
@@ -217,30 +177,17 @@ export default function EnhancedMapComponent({
           googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
         >
           <GoogleMap
-            center={selectedLocation || defaultCenter} // Dynamically set the center
+            center={selectedLocation || defaultCenter}
             zoom={6}
             mapContainerClassName="w-full h-full"
             onClick={handleMapClick}
             onLoad={(map) => {
               mapRef.current = map;
-              // Apply custom styling to the map
               map.setOptions({
                 zoomControl: true,
                 streetViewControl: false,
                 mapTypeControl: false,
                 fullscreenControl: false,
-                styles: [
-                  {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }],
-                  },
-                  {
-                    featureType: "transit",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }],
-                  },
-                ],
               });
             }}
             options={{

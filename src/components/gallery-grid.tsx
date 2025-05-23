@@ -25,7 +25,6 @@ type Photo = {
 };
 
 export function GalleryGrid() {
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<Photo | null>(null);
   const [editName, setEditName] = useState("");
@@ -80,7 +79,7 @@ export function GalleryGrid() {
     });
   };
 
-  const handleShare = (photo: Photo) => {
+  const handleShare = () => {
     // In a real application, sharing logic would go here
     toast("Share link created", {
       description: "Link copied to clipboard.",
@@ -92,10 +91,7 @@ export function GalleryGrid() {
       {photos.map((photo) => (
         <Dialog key={photo.id}>
           <DialogTrigger asChild>
-            <div
-              className="overflow-hidden rounded-lg border cursor-pointer group relative aspect-square"
-              onClick={() => setSelectedImage(photo.id)}
-            >
+            <div className="overflow-hidden rounded-lg border cursor-pointer group relative aspect-square">
               <LazyLoadImage
                 src={photo.url || "/placeholder.svg"}
                 alt={photo.name}
@@ -138,11 +134,7 @@ export function GalleryGrid() {
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleShare(photo)}
-              >
+              <Button variant="outline" size="sm" onClick={() => handleShare()}>
                 <Share className="h-4 w-4 mr-2" />
                 Share
               </Button>

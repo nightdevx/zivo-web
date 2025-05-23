@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,7 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Clock, CalendarDays } from "lucide-react";
-import { Employee } from "@/lib/models/employee.model";
+import type { Employee } from "@/lib/models/employee.model";
 import {
   useUpdateEmployee,
   useDeleteEmployee,
@@ -64,15 +66,23 @@ function EmployeeCard({
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="p-0">
-        <div className="relative h-32 bg-gradient-to-r from-primary/10 to-primary/5">
-          <div className="absolute -bottom-10 left-4">
-            <Avatar className="h-20 w-20 border-4 border-background">
-              <AvatarImage src={member.image || ""} alt={member.name} />
-              <AvatarFallback className="text-xl">{member.name}</AvatarFallback>
-            </Avatar>
-          </div>
-          <div className="absolute top-4 right-4">
+      <CardHeader className="flex flex-row items-center gap-4 pb-2">
+        <Avatar className="h-16 w-16 border-2 border-muted">
+          <AvatarImage
+            src={
+              (member.profile_image && member.profile_image_url) ||
+              "/src/assets/profile-placeholder.png"
+            }
+            alt={member.name}
+          />
+          <AvatarFallback className="text-lg">
+            {member.name.charAt(0)}
+            {member.name.split(" ")[1]?.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-xl">{member.name}</CardTitle>
             {member.status === "active" ? (
               <Badge
                 variant="outline"
@@ -89,14 +99,11 @@ function EmployeeCard({
               </Badge>
             )}
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-12 pb-4">
-        <div className="space-y-1.5">
-          <CardTitle className="text-xl">{member.name}</CardTitle>
           <CardDescription>{member.role}</CardDescription>
         </div>
-        <div className="mt-4 space-y-3 text-sm">
+      </CardHeader>
+      <CardContent className="pb-4">
+        <div className="space-y-3 text-sm">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Email:</span>
             <span className="font-medium">{member.email}</span>
@@ -139,7 +146,7 @@ function EmployeeCard({
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col gap-2 pt-0">
+      <CardFooter className="flex flex-col gap-2 border-t pt-4">
         <div className="grid grid-cols-2 gap-2 w-full">
           <Button
             variant="outline"

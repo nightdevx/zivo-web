@@ -1,29 +1,22 @@
 type User = {
-  city: string;
   created_at: string | null;
   email: string;
-  id?: number;
-  name: string;
+  id: string;
   password: string;
-  terms: boolean;
+  refresh_token: string | null;
+  salt: string;
   type: string;
-  phone: string | null;
 };
 
 type UserInsert = {
-  city: string;
   email: string;
-  name: string;
   password: string;
-  phone: string | null;
-  terms: boolean;
   type: string;
 };
 
 type UserUpdate = {
   city?: string;
   email?: string;
-  name?: string;
   phone?: string | null;
 };
 

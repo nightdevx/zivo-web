@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarIcon, Filter, Plus, Search } from "lucide-react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { CalendarIcon, Filter, Search } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { AppointmentsTable } from "@/components/appointments-table";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
@@ -50,12 +50,12 @@ function AppointmentsPage() {
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Appointments</h1>
-          <Button asChild>
+          {/* <Button asChild>
             <Link to="/dashboard/appointments/new">
               <Plus className="mr-2 h-4 w-4" />
               New Appointment
             </Link>
-          </Button>
+          </Button> */}
         </div>
 
         <Tabs defaultValue="upcoming">
@@ -161,7 +161,7 @@ function AppointmentsPage() {
           </TabsContent>
 
           <TabsContent value="past" className="mt-4">
-            <AppointmentsTable isPast />
+            <AppointmentsTable />
           </TabsContent>
         </Tabs>
       </main>

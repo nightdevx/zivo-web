@@ -5,9 +5,10 @@ import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   GetMyCompanyQueryOptions,
-  useUpdateCompany,
+  useUpdateMyCompany,
 } from "@/lib/hooks/companies.hook";
 import { GetMyUserQueryOptions, useUpdateUser } from "@/lib/hooks/users.hook";
+import { useGetMyLocation } from "@/lib/hooks/location.hook";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
@@ -22,6 +23,8 @@ import UserTab from "@/components/profile/user-tab";
 import BusinessTab from "@/components/profile/business-tab";
 import BrandingTab from "@/components/profile/branding-tab";
 
+import { Location } from "@/lib/models/location.model";
+
 // import MapPopup from "@/components/map-component";
 
 export const Route = createFileRoute("/dashboard/profile/")({
@@ -34,16 +37,13 @@ export const Route = createFileRoute("/dashboard/profile/")({
 
 // Define validation schemas
 const userFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  city: z.string().min(2, {
-    message: "City must be at least 2 characters.",
-  }),
-  phone: z.string(),
+  email: z
+    .string()
+    .email({
+      message: "Please enter a valid email address.",
+    })
+    .optional(),
+  phone: z.string().nullable().optional(),
 });
 
 const companyFormSchema = z.object({
@@ -53,55 +53,60 @@ const companyFormSchema = z.object({
       message: "Business name must be at least 2 characters.",
     })
     .optional(),
-  location: z.object({
-    latitude: z.number().optional(),
-    longitude: z.number().optional(),
-    address: z.string().optional(),
-  }),
-  category: z.string({
-    required_error: "Please select a category.",
-  }),
-  description: z.string(),
-  phone_number: z.string().optional(),
-  website: z.string().optional(),
-  instagram_url: z.string().optional(),
-  facebook_url: z.string().optional(),
-  tiktok_url: z.string().optional(),
-  youtube_url: z.string().optional(),
-  x_url: z.string().optional(),
+  category: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  phone_number: z.string().optional().nullable(),
+  website: z.string().optional().nullable(),
+  instagram_url: z.string().optional().nullable(),
+  facebook_url: z.string().optional().nullable(),
+  tiktok_url: z.string().optional().nullable(),
+  youtube_url: z.string().optional().nullable(),
+  x_url: z.string().optional().nullable(),
 });
-
-// Renk teması tipi
 
 export default function ProfilePage() {
   const userQuery = useSuspenseQuery(GetMyUserQueryOptions);
   const userData: User = userQuery.data;
 
   const companyQuery = useSuspenseQuery(GetMyCompanyQueryOptions);
-  const companyData: Company = companyQuery.data;
-  console.log(companyData);
+  const companyData: Company & {
+    cover_image_url: string;
+    logo_url: string;
+  } = companyQuery.data;
+
+  // const locationQuery = useSuspenseQuery(GetMyLocationQueryOptions);
+  // const locationData: Location = locationQuery.data ?? {
+  //   id: 0,
+  //   address: "",
+  //   latitude: 0,
+  //   longitude: 0,
+  // };
+  // console.log("locationData", locationData);
+  const { data: locationData } = useGetMyLocation();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    locationData
+      ? {
+          id: locationData.id,
+          address: locationData.address,
+          latitude: locationData.latitude,
+          longitude: locationData.longitude,
+        }
+      : null
+  );
 
   const userForm = useForm<UserUpdate>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      name: userData?.name ?? "",
-      email: userData?.email ?? "",
-      city: userData?.city ?? "",
-      phone: userData?.phone ?? "",
+      email: userData.email,
     },
   });
 
-  const companyForm = useForm<CompanyUpdate>({
+  const companyForm = useForm<z.infer<typeof companyFormSchema>>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
       name: companyData?.name ?? "",
-      location: {
-        latitude: companyData?.location?.latitude ?? 0,
-        longitude: companyData?.location?.longitude ?? 0,
-        address: companyData?.location?.address ?? "",
-      },
       category: companyData?.category ?? "",
       description: companyData?.description ?? "",
       phone_number: companyData?.phone_number ?? "",
@@ -115,7 +120,7 @@ export default function ProfilePage() {
   });
 
   const updateUser = useUpdateUser();
-  const updateCompany = useUpdateCompany();
+  const updateCompany = useUpdateMyCompany();
 
   function onUserSubmit(data: UserUpdate) {
     updateUser.mutate(
@@ -136,8 +141,9 @@ export default function ProfilePage() {
   }
 
   function onCompanySubmit(data: CompanyInsert | CompanyUpdate) {
+    console.log("onCompanySubmit", data);
     updateCompany.mutate(
-      { id: String(companyData.id), companyData: data },
+      { companyData: data },
       {
         onSuccess: () => {
           toast("Business information updated", {
@@ -161,9 +167,11 @@ export default function ProfilePage() {
     address: string;
   }) => {
     setIsPopupOpen(false);
-    companyForm.setValue("location.address", place.address);
-    companyForm.setValue("location.latitude", place.lat);
-    companyForm.setValue("location.longitude", place.lng);
+    setSelectedLocation({
+      address: place.address,
+      latitude: place.lat,
+      longitude: place.lng,
+    });
   };
 
   // Check if userData and companyData are defined
@@ -194,13 +202,17 @@ export default function ProfilePage() {
           <UserTab onUserSubmit={onUserSubmit} userForm={userForm} />
 
           <BusinessTab
+            location={selectedLocation || undefined}
             companyForm={companyForm}
             onCompanySubmit={onCompanySubmit}
             handlePlaceSelected={handlePlaceSelected}
             isPopupOpen={isPopupOpen}
             setIsPopupOpen={setIsPopupOpen}
           />
-          <BrandingTab />
+          <BrandingTab
+            initialCoverImageUrl={companyData.cover_image_url}
+            initialLogoUrl={companyData.logo_url}
+          />
         </Tabs>
       </main>
     </div>

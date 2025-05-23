@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 type Photo = {
-  id: number;
+  id: string;
   url: string;
   name: string;
   uploadDate: string;
@@ -17,7 +17,7 @@ interface PhotosTabProps {
 }
 
 const PhotosTab: React.FC<PhotosTabProps> = ({ photos }) => {
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [view] = useState<"grid" | "list">("grid");
 
   return (
     <TabsContent value="photos" className="mt-4">

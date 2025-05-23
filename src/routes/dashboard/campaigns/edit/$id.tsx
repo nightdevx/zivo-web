@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, Edit } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
@@ -40,13 +40,12 @@ import {
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/dashboard/campaigns/edit/$id")({
   component: EditCampaignPage,
-  loader: ({ context: { queryClient }, params: { id } }) => {
-    // queryClient.ensureQueryData(GetServiceByIdQueryOptions(id));
-  },
+  // loader: ({ context: { queryClient }, params: { id } }) => {
+  //   // queryClient.ensureQueryData(GetServiceByIdQueryOptions(id));
+  // },
 });
 
 const formSchema = z.object({
@@ -85,7 +84,7 @@ function EditCampaignPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(_: z.infer<typeof formSchema>) {
     toast("Campaign created", {
       description: "Your campaign has been created successfully.",
     });

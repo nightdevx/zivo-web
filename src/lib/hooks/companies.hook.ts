@@ -33,18 +33,13 @@ export const useCreateCompany = () => {
 };
 
 // Hook to update a company
-export const useUpdateCompany = () => {
+export const useUpdateMyCompany = () => {
   const queryClient = useQueryClient();
-  return useMutation<
-    Company,
-    unknown,
-    { id: string; companyData: CompanyUpdate }
-  >({
-    mutationFn: ({ id, companyData }) =>
-      CompaniesService.updateCompany(id, companyData),
-    onSuccess: (_, { id }) => {
+  return useMutation<Company, unknown, { companyData: CompanyUpdate }>({
+    mutationFn: ({ companyData }) =>
+      CompaniesService.updateMyCompany(companyData),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
-      queryClient.invalidateQueries({ queryKey: ["company", id] });
     },
   });
 };

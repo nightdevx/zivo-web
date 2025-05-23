@@ -14,12 +14,12 @@ class UsersService {
     return response.data;
   }
 
-  async updateUser(id: number, user: UserUpdate): Promise<User> {
+  async updateUser(id: string, user: UserUpdate): Promise<User> {
     const response = await API.put<User>(`/users/${id}`, user);
     return response.data;
   }
 
-  async deleteUser(id: number): Promise<void> {
+  async deleteUser(id: string): Promise<void> {
     await API.delete(`/users/${id}`);
   }
 }

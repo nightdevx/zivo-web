@@ -21,7 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Scissors, Building2 } from "lucide-react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useRegister } from "@/lib/hooks/auth.hook";
@@ -42,23 +41,14 @@ export const Route = createFileRoute("/(auth)/register/")({
 
 const userFormSchema = z
   .object({
-    name: z.string().min(2, {
-      message: "Name must be at least 2 characters.",
-    }),
     email: z.string().email({
       message: "Please enter a valid email address.",
     }),
-    city: z.string().min(2, {
-      message: "City is required.",
-    }),
-    phone: z.string().optional(),
+
     password: z.string().min(8, {
       message: "Password must be at least 8 characters.",
     }),
     confirmPassword: z.string(),
-    terms: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms and conditions.",
-    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -69,13 +59,10 @@ const companyFormSchema = z.object({
   name: z.string().min(2, {
     message: "Company name must be at least 2 characters.",
   }),
-  address: z.string().min(5, {
-    message: "Address is required.",
-  }),
   category: z.string().min(1, {
     message: "Category is required.",
   }),
-  description: z.string().nullable(),
+  description: z.string().optional(),
 });
 
 type UserFormValues = z.infer<typeof userFormSchema>;
@@ -90,13 +77,9 @@ export default function RegisterPage() {
   const userForm = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      name: "",
       email: "",
-      city: "",
-      phone: "",
       password: "",
       confirmPassword: "",
-      terms: false,
     },
   });
 
@@ -104,9 +87,8 @@ export default function RegisterPage() {
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
       name: "",
-      address: "",
       category: "",
-      description: null,
+      description: "",
     },
   });
 
@@ -117,9 +99,8 @@ export default function RegisterPage() {
     // Completely reset the company form to ensure no data persists
     companyForm.reset({
       name: "",
-      address: "",
       category: "",
-      description: null,
+      description: "",
     });
 
     // Move to next step
@@ -133,7 +114,7 @@ export default function RegisterPage() {
     const { confirmPassword, ...userPayload } = userData;
 
     register.mutate(
-      { ...userPayload, phone: userPayload.phone ?? null, type: "company" },
+      { ...userPayload, type: "company" },
       {
         onSuccess: (id) => {
           setIsLoading(false);
@@ -199,23 +180,6 @@ export default function RegisterPage() {
               >
                 <FormField
                   control={userForm.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Owner Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Jane Doe"
-                          className="elegant-input"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={userForm.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -231,42 +195,7 @@ export default function RegisterPage() {
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={userForm.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>City</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="New York"
-                            className="elegant-input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={userForm.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone (Optional)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="+1 555 123 4567"
-                            className="elegant-input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+
                 <FormField
                   control={userForm.control}
                   name="password"
@@ -304,41 +233,7 @@ export default function RegisterPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={userForm.control}
-                  name="terms"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-2 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel className="text-sm font-normal">
-                          <span>
-                            I accept the{" "}
-                            <Link
-                              to="/"
-                              className="text-primary-600 hover:underline"
-                            >
-                              Terms of Service
-                            </Link>{" "}
-                            and{" "}
-                            <Link
-                              to="/"
-                              className="text-primary-600 hover:underline"
-                            >
-                              Privacy Policy
-                            </Link>
-                            .
-                          </span>
-                        </FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
+
                 <Button type="submit" className="w-full primary-button">
                   Continue to Salon Details
                 </Button>
@@ -360,25 +255,6 @@ export default function RegisterPage() {
                       <FormControl>
                         <Input
                           placeholder="Beauty Salon & Spa"
-                          className="elegant-input"
-                          {...field}
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={companyForm.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="123 Main St, Suite 100"
                           className="elegant-input"
                           {...field}
                           value={field.value || ""}

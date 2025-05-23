@@ -11,20 +11,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MultiSelect } from "@/components/multi-select";
-import { Employee } from "@/lib/models/employee.model";
+import { Employee, EmployeeUpdate } from "@/lib/models/employee.model";
 import { useUpdateEmployee } from "@/lib/hooks/employee.hook";
 import { useDeleteEmployeeServices } from "@/lib/hooks/employee-services.hooks";
 import { toast } from "sonner";
 import { useState } from "react";
 import { X, Camera } from "lucide-react";
+import { useUploadFile } from "@/lib/hooks/file.hook";
 
+// Zod şeması zorunlu alanlarla güncellendi
 const employeeSchema = z.object({
-  name: z.string().optional(),
-  role: z.string().optional(),
-  email: z.string().email().optional(),
-  phone: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
+  role: z.string().min(1, "Role is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(1, "Phone is required"),
   specialties: z.array(z.string()).optional(),
-  image: z.instanceof(File).optional().nullable(),
+  profile_image: z.instanceof(File).optional().nullable(),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -40,6 +42,7 @@ const EditEmployeeForm = ({
 }) => {
   const { mutate: updateEmployee } = useUpdateEmployee();
   const { mutate: deleteEmployeeServices } = useDeleteEmployeeServices();
+  const { mutate: uploadFile } = useUploadFile();
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -69,14 +72,14 @@ const EditEmployeeForm = ({
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
-      name: employee.name,
-      role: employee.role,
-      email: employee.email,
-      phone: employee.phone,
+      name: employee.name || "",
+      role: employee.role || "",
+      email: employee.email || "",
+      phone: employee.phone || "",
       specialties: employee.specialties.map((specialty) =>
         typeof specialty === "string" ? specialty : specialty.id
-      ), // Map specialties to IDs
-      image: null,
+      ),
+      profile_image: null,
     },
   });
 
@@ -93,7 +96,6 @@ const EditEmployeeForm = ({
   ): Partial<T> {
     return Object.keys(updated).reduce((acc, key) => {
       if (Array.isArray(original[key]) && Array.isArray(updated[key])) {
-        // Sadece yeni eklenen öğeleri al
         const addedItems = getAddedItems(original[key], updated[key]);
         if (addedItems.length > 0) {
           acc[key as keyof T] = addedItems as T[keyof T];
@@ -111,19 +113,63 @@ const EditEmployeeForm = ({
         ...employee,
         specialties: employee.specialties.map((specialty) =>
           typeof specialty === "string" ? specialty : specialty.id
-        ), // Compare with IDs
+        ),
       },
       {
         ...data,
-        image: data.image instanceof File ? data.image : null, // Ensure image is a File or null
+        profile_image:
+          data.profile_image instanceof File ? data.profile_image : null,
       }
     );
 
     if (!updatedFields.specialties || updatedFields.specialties.length === 0) {
       delete updatedFields.specialties;
     }
+
+    if (
+      updatedFields.profile_image &&
+      updatedFields.profile_image instanceof File
+    ) {
+      uploadFile(updatedFields.profile_image, {
+        onSuccess: (fileUrl) => {
+          const payload: EmployeeUpdate = {
+            ...updatedFields,
+            profile_image: fileUrl,
+          };
+          updateEmployee(
+            {
+              id: employee.id,
+              updatedEmployee: payload,
+            },
+            {
+              onSuccess: () => {
+                toast.success("Employee updated successfully.");
+                onCancel();
+              },
+              onError: () => {
+                toast.error("Failed to update employee.");
+              },
+            }
+          );
+        },
+        onError: () => {
+          toast.error("Failed to upload profile_image.");
+        },
+      });
+      return;
+    }
+
+    const sanitizedFields = { ...updatedFields };
+    if (
+      "profile_image" in sanitizedFields &&
+      (typeof sanitizedFields.profile_image !== "string" ||
+        sanitizedFields.profile_image === "")
+    ) {
+      delete sanitizedFields.profile_image;
+    }
+
     updateEmployee(
-      { id: employee.id, updatedEmployee: updatedFields },
+      { id: employee.id, updatedEmployee: sanitizedFields as EmployeeUpdate },
       {
         onSuccess: () => {
           toast.success("Employee updated successfully.");
@@ -149,11 +195,17 @@ const EditEmployeeForm = ({
         <div className="col-span-3">
           <div className="flex flex-col items-center">
             <div className="relative group">
-              {selectedImage ? (
+              {(employee.profile_image && employee.profile_image_url) ||
+              selectedImage ? (
                 <div className="relative">
                   <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-primary/20 shadow-sm">
                     <img
-                      src={selectedImage || "/placeholder.svg"}
+                      src={
+                        (employee.profile_image &&
+                          employee.profile_image_url) ||
+                        selectedImage ||
+                        "/placeholder.svg"
+                      }
                       alt="Employee preview"
                       className="w-full h-full object-cover"
                     />
@@ -161,7 +213,7 @@ const EditEmployeeForm = ({
                   <button
                     type="button"
                     onClick={() => {
-                      setValue("image", null);
+                      setValue("profile_image", null);
                       setSelectedImage(null);
                     }}
                     className="absolute -top-1 -right-1 bg-white rounded-full p-1 shadow-md hover:bg-red-50 transition-colors border border-gray-200"
@@ -195,7 +247,7 @@ const EditEmployeeForm = ({
                     const reader = new FileReader();
                     reader.onload = (event) => {
                       setSelectedImage(event.target?.result as string);
-                      setValue("image", file);
+                      setValue("profile_image", file);
                     };
                     reader.readAsDataURL(file);
                   }
@@ -208,8 +260,10 @@ const EditEmployeeForm = ({
               </p>
             )}
           </div>
-          {errors.image && (
-            <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
+          {errors.profile_image && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.profile_image.message}
+            </p>
           )}
         </div>
       </div>

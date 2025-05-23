@@ -24,7 +24,7 @@ interface Campaign {
 }
 
 function CampaignsPage() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([
+  const [campaigns, _] = useState<Campaign[]>([
     {
       id: "1",
       title: "Summer Special: 20% Off Hair Coloring",

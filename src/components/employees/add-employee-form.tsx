@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { MultiSelect } from "@/components/multi-select";
 import { useCreateEmployee } from "@/lib/hooks/employee.hook";
+import { useUploadFile } from "@/lib/hooks/file.hook";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Camera, Upload, X } from "lucide-react";
+import { Camera, X } from "lucide-react";
 
 // Define Zod schema
 const employeeSchema = z.object({
@@ -23,7 +24,7 @@ const employeeSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone: z.string().min(1, "Phone is required"),
   specialties: z.array(z.string()).optional(),
-  image: z.instanceof(File).optional().nullable(),
+  profile_image: z.instanceof(File).optional().nullable(),
 });
 
 type EmployeeFormData = z.infer<typeof employeeSchema>;
@@ -35,6 +36,7 @@ const AddEmployeeForm = ({
   onCancel: () => void;
   availableServices: { label: string; value: string }[];
 }) => {
+  const { mutate: uploadFile } = useUploadFile();
   const { mutate: createEmployee } = useCreateEmployee();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -52,15 +54,48 @@ const AddEmployeeForm = ({
       email: "",
       phone: "",
       specialties: [],
-      image: null,
+      profile_image: null,
     },
   });
 
   const specialties = watch("specialties");
 
   const onSubmit = (data: EmployeeFormData) => {
+    if (data.profile_image) {
+      uploadFile(data.profile_image, {
+        onSuccess: (fileUrl) => {
+          createEmployee(
+            {
+              ...data,
+              profile_image: fileUrl,
+              specialties: data.specialties || [],
+            },
+            {
+              onSuccess: () => {
+                toast.success("Employee added successfully.");
+                onCancel();
+              },
+              onError: (error) => {
+                toast.error("An error occurred while adding the employee.");
+                console.error(error);
+              },
+            }
+          );
+        },
+        onError: (error) => {
+          toast.error("An error occurred while uploading the image.");
+          console.error(error);
+        },
+      });
+      return;
+    }
+
     createEmployee(
-      { ...data, specialties: data.specialties || [] },
+      {
+        ...data,
+        specialties: data.specialties || [],
+        profile_image: undefined, // Ensure profile_image is string or undefined
+      },
       {
         onSuccess: () => {
           toast.success("Employee added successfully.");
@@ -102,7 +137,7 @@ const AddEmployeeForm = ({
                     <button
                       type="button"
                       onClick={() => {
-                        setValue("image", null);
+                        setValue("profile_image", null);
                         setSelectedImage(null);
                       }}
                       className="absolute -top-1 -right-1 bg-white rounded-full p-1 shadow-md hover:bg-red-50 transition-colors border border-gray-200"
@@ -136,7 +171,7 @@ const AddEmployeeForm = ({
                       const reader = new FileReader();
                       reader.onload = (event) => {
                         setSelectedImage(event.target?.result as string);
-                        setValue("image", file);
+                        setValue("profile_image", file);
                       };
                       reader.readAsDataURL(file);
                     }
@@ -149,9 +184,9 @@ const AddEmployeeForm = ({
                 </p>
               )}
             </div>
-            {errors.image && (
+            {errors.profile_image && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.image.message}
+                {errors.profile_image.message}
               </p>
             )}
           </div>

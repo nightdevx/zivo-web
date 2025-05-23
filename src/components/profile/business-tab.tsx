@@ -34,9 +34,11 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { add } from "date-fns";
+import { Location } from "@/lib/models/location.model";
+
 interface BusinessTabProps {
   companyForm: any;
+  location?: Location;
   onCompanySubmit: (data: any) => void;
   handlePlaceSelected: (place: any) => void;
   isPopupOpen: boolean;
@@ -45,6 +47,7 @@ interface BusinessTabProps {
 
 const BusinessTab: React.FC<BusinessTabProps> = ({
   companyForm,
+  location,
   onCompanySubmit,
   handlePlaceSelected,
   isPopupOpen,
@@ -118,48 +121,42 @@ const BusinessTab: React.FC<BusinessTabProps> = ({
                 </div>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                  <FormField
-                    control={companyForm.control}
-                    name="location.address"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Address</FormLabel>
-                        <FormControl>
-                          <Input
-                            disabled={true}
-                            placeholder="Business address"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="flex items-center gap-2 pt-5">
-                    <MapPopup
-                      selectedLocation={{
-                        address: companyForm.getValues("location.address"),
-                        latitude: companyForm.getValues("location.latitude"),
-                        longitude: companyForm.getValues("location.longitude"),
-                      }}
+                  <div className="w-full">
+                    <h3 className="text-lg font-bold mb-2">Location</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Add your business location to help customers find you
+                      easily.
+                    </p>
+                    <div className="flex items-center gap-2 ">
+                      <MapPopup
+                      selectedLocation={
+                        location
+                        ? {
+                          address: location.address,
+                          latitude: location.latitude ,
+                          longitude: location.longitude ,
+                          }
+                        : undefined
+                      }
                       onPlaceSelected={handlePlaceSelected}
                       open={isPopupOpen}
                       setOpen={setIsPopupOpen}
-                    />
-                    <TooltipProvider>
+                      />
+                      <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <CircleAlert size={26} />
+                        <CircleAlert size={26} />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>
-                            If you pinpoint the exact location on the map, it
-                            will be displayed on the map within the app, making
-                            it easier for users to find you.
-                          </p>
+                        <p>
+                          If you pinpoint the exact location on the map, it
+                          will be displayed on the map within the app,
+                          making it easier for users to find you.
+                        </p>
                         </TooltipContent>
                       </Tooltip>
-                    </TooltipProvider>
+                      </TooltipProvider>
+                    </div>
                   </div>
                 </div>
 

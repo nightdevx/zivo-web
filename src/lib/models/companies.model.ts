@@ -1,8 +1,6 @@
-import { Location } from "./location.model";
 type Company = {
-  id: number;
+  id: string;
   name: string;
-  location: Location;
   category: string;
   description: string | null;
   logo?: string;
@@ -15,25 +13,15 @@ type Company = {
   youtube_url?: string;
   x_url?: string;
   opening_hours: JSON;
-  user_id: number | null;
+  user_id: string;
 };
 
 type CompanyInsert = {
   name: string;
-  location: Location;
   category: string;
-  description: string | null;
-  logo?: string;
-  cover_image?: string;
+  description?: string;
   phone_number?: string;
-  website?: string;
-  instagram_url?: string;
-  facebook_url?: string;
-  tiktok_url?: string;
-  youtube_url?: string;
-  x_url?: string;
-  opening_hours: JSON;
-  user_id: number | null;
+  user_id: string;
 };
 
 type CompanyUpdate = Partial<Omit<Company, "id">>;

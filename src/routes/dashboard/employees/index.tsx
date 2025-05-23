@@ -216,7 +216,7 @@ function EmployeesPage() {
       member.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleUpdateSchedule = (updatedSchedule: any) => {
+  const handleUpdateSchedule = () => {
     if (!selectedStaff) return;
 
     setIsScheduleOpen(false);

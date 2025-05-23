@@ -177,7 +177,7 @@ function EditAppointmentPage() {
     setLoading(false);
   }, [appointmentId, form, navigator]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(_: z.infer<typeof formSchema>) {
     toast("Appointment updated", {
       description: "Appointment details have been successfully updated.",
     });

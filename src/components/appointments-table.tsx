@@ -1,5 +1,3 @@
-"use client";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,31 +29,45 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Check, Copy, Edit, MoreHorizontal, Trash2, X } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { useGetAppointmentsByCompanyId } from "@/lib/hooks/appointments.hook";
+import { format } from "date-fns";
 
-interface AppointmentsTableProps {
-  isPast?: boolean;
-}
 
-export function AppointmentsTable({ isPast = false }: AppointmentsTableProps) {
-  const [appointments, setAppointments] = useState(
-    isPast ? pastAppointments : upcomingAppointments
-  );
+export function AppointmentsTable() {
+  const { data: appointments } = useGetAppointmentsByCompanyId();
+  // const [appointments, setAppointments] = useState(
+  //   isPast ? pastAppointments : upcomingAppointments
+  // );
 
-  const handleStatusChange = (id: number, newStatus: string) => {
-    setAppointments(
-      appointments.map((appointment) =>
-        appointment.id === id
-          ? { ...appointment, status: newStatus }
-          : appointment
-      )
+  // const handleStatusChange = (id: number, newStatus: string) => {
+  //   setAppointments(
+  //     appointments.map((appointment) =>
+  //       appointment.id === id
+  //         ? { ...appointment, status: newStatus }
+  //         : appointment
+  //     )
+  //   );
+
+  //   toast.message(`Appointment ${newStatus}`, {
+  //     description: `Appointment has been ${newStatus} successfully.`,
+  //   });
+  // };
+
+  if (!appointments) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <Avatar>
+            <AvatarFallback>Loading...</AvatarFallback>
+            <AvatarImage src="/placeholder.svg?height=32&width=32" />
+          </Avatar>
+          <p className="text-sm text-muted-foreground">
+            Loading appointments...
+          </p>
+        </div>
+      </div>
     );
-
-    toast.message(`Appointment ${newStatus}`, {
-      description: `Appointment has been ${newStatus} successfully.`,
-    });
-  };
+  }
 
   return (
     <div className="rounded-md border">
@@ -71,36 +83,38 @@ export function AppointmentsTable({ isPast = false }: AppointmentsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {appointments.map((appointment) => (
+          {appointments.map((appointment: any) => (
             <TableRow key={appointment.id}>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={appointment.avatar}
-                      alt={appointment.client}
-                    />
-                    <AvatarFallback>{appointment.initials}</AvatarFallback>
-                  </Avatar>
                   <div>
-                    <div className="font-medium">{appointment.client}</div>
+                    <div className="font-medium">
+                      {appointment.customer?.name}
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {appointment.phone}
+                      {formatPhone(appointment.customer?.phone)}
                     </div>
                   </div>
                 </div>
               </TableCell>
-              <TableCell>{appointment.service}</TableCell>
               <TableCell>
-                <div>{appointment.date}</div>
+                {appointment.services && appointment.services.length > 0
+                  ? appointment.services.map((s: any) => s.name).join(", ")
+                  : "-"}
+              </TableCell>
+              <TableCell>
+                <div>{formatDate(appointment.start_time)}</div>
                 <div className="text-sm text-muted-foreground">
-                  {appointment.time}
+                  {formatTimeRange(
+                    appointment.start_time,
+                    appointment.end_time
+                  )}
                 </div>
               </TableCell>
               <TableCell>
                 <StatusBadge status={appointment.status} />
               </TableCell>
-              <TableCell>{appointment.staff}</TableCell>
+              <TableCell>{appointment.employee?.name}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
                   {appointment.status === "pending" && (
@@ -109,9 +123,9 @@ export function AppointmentsTable({ isPast = false }: AppointmentsTableProps) {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8 text-green-600"
-                        onClick={() =>
-                          handleStatusChange(appointment.id, "confirmed")
-                        }
+                        // onClick={() =>
+                        //   handleStatusChange(appointment.id, "confirmed")
+                        // }
                       >
                         <Check className="h-4 w-4" />
                         <span className="sr-only">Approve</span>
@@ -120,9 +134,9 @@ export function AppointmentsTable({ isPast = false }: AppointmentsTableProps) {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8 text-red-600"
-                        onClick={() =>
-                          handleStatusChange(appointment.id, "rejected")
-                        }
+                        // onClick={() =>
+                        //   handleStatusChange(appointment.id, "rejected")
+                        // }
                       >
                         <X className="h-4 w-4" />
                         <span className="sr-only">Reject</span>
@@ -148,9 +162,9 @@ export function AppointmentsTable({ isPast = false }: AppointmentsTableProps) {
                       </DropdownMenuItem>
                       {appointment.status === "confirmed" && (
                         <DropdownMenuItem
-                          onClick={() =>
-                            handleStatusChange(appointment.id, "completed")
-                          }
+                        // onClick={() =>
+                        //   handleStatusChange(appointment.id, "completed")
+                        // }
                         >
                           <Check className="mr-2 h-4 w-4" />
                           Mark as Completed
@@ -182,9 +196,9 @@ export function AppointmentsTable({ isPast = false }: AppointmentsTableProps) {
                               No, keep appointment
                             </AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() =>
-                                handleStatusChange(appointment.id, "cancelled")
-                              }
+                              // onClick={() =>
+                              //   handleStatusChange(appointment.id, "cancelled")
+                              // }
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               Yes, cancel appointment
@@ -254,106 +268,31 @@ function StatusBadge({ status }: { status: string }) {
 
   return <Badge variant="outline">{status}</Badge>;
 }
+// Yardımcı fonksiyonlar:
+function formatPhone(phone?: string) {
+  if (!phone) return "-";
+  // +90 ile başlamıyorsa başına ekle
+  let p = phone;
+  if (!p.startsWith("+90")) p = "+90" + p;
+  return p.replace(/^(\+90)(\d{3})(\d{3})(\d{4})$/, "$1 $2 $3 $4");
+}
 
-// Dummy data
-const upcomingAppointments = [
-  {
-    id: 1,
-    client: "Ayse Yilmaz",
-    phone: "+90 555 123 4567",
-    service: "Haircut & Blow Dry",
-    date: "April 15, 2025",
-    time: "10:00 AM - 11:30 AM",
-    status: "confirmed",
-    staff: "Zehra",
-    initials: "AY",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 2,
-    client: "Mehmet Demir",
-    phone: "+90 555 234 5678",
-    service: "Beard Trim",
-    date: "April 15, 2025",
-    time: "12:00 PM - 1:00 PM",
-    status: "confirmed",
-    staff: "Ahmet",
-    initials: "MD",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 3,
-    client: "Zeynep Kaya",
-    phone: "+90 555 345 6789",
-    service: "Hair Coloring",
-    date: "April 15, 2025",
-    time: "2:00 PM - 3:30 PM",
-    status: "pending",
-    staff: "Zehra",
-    initials: "ZK",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 4,
-    client: "Fatma Sahin",
-    phone: "+90 555 456 7890",
-    service: "Manicure & Pedicure",
-    date: "April 15, 2025",
-    time: "4:00 PM - 5:30 PM",
-    status: "pending",
-    staff: "Selin",
-    initials: "FS",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-];
+function formatDate(dateStr?: string) {
+  if (!dateStr) return "-";
+  try {
+    return format(new Date(dateStr), "PPP");
+  } catch {
+    return dateStr;
+  }
+}
 
-const pastAppointments = [
-  {
-    id: 5,
-    client: "Ahmet Koc",
-    phone: "+90 555 567 8901",
-    service: "Haircut",
-    date: "April 8, 2025",
-    time: "11:00 AM - 12:00 PM",
-    status: "completed",
-    staff: "Ahmet",
-    initials: "AK",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 6,
-    client: "Sevgi Ozturk",
-    phone: "+90 555 678 9012",
-    service: "Hair Coloring & Care",
-    date: "April 7, 2025",
-    time: "2:00 PM - 4:30 PM",
-    status: "completed",
-    staff: "Zehra",
-    initials: "SO",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 7,
-    client: "Emir Yildiz",
-    phone: "+90 555 789 0123",
-    service: "Beard Styling",
-    date: "April 5, 2025",
-    time: "10:30 AM - 11:30 AM",
-    status: "completed",
-    staff: "Ahmet",
-    initials: "EY",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 8,
-    client: "Deniz Korkmaz",
-    phone: "+90 555 890 1234",
-    service: "Facial Care",
-    date: "April 3, 2025",
-    time: "1:00 PM - 2:00 PM",
-    status: "cancelled",
-    staff: "Selin",
-    initials: "DK",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-];
+function formatTimeRange(start?: string, end?: string) {
+  if (!start || !end) return "-";
+  try {
+    return (
+      format(new Date(start), "HH:mm") + " - " + format(new Date(end), "HH:mm")
+    );
+  } catch {
+    return start + " - " + end;
+  }
+}

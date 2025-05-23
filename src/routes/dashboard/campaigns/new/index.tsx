@@ -81,7 +81,7 @@ function NewCampaignPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(_: z.infer<typeof formSchema>) {
     toast("Campaign created", {
       description: "Your campaign has been created successfully.",
     });

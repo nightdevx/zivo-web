@@ -2,6 +2,7 @@ import * as React from "react";
 import AuthService from "./lib/services/auth.service";
 import { useAccessKey } from "./lib/stores/access-key.store";
 import { useLogout } from "./lib/hooks/auth.hook";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface AuthContext {
   isAuthenticated: boolean;
@@ -31,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = !!user;
   const accessKeyStore = useAccessKey();
   const { mutate: logoutMutation } = useLogout();
+  const queryClient = useQueryClient(); // QueryClient hook'u ekleniyor
 
   const logout = React.useCallback(async () => {
     try {
@@ -38,10 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setStoredUser(null);
       setUser(null);
       accessKeyStore.setState(() => null); // Clear access token
+      queryClient.clear(); // QueryClient'ı temizle
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  }, [accessKeyStore]);
+  }, [accessKeyStore, queryClient, logoutMutation]);
 
   const login = React.useCallback(
     async (email: string, password: string) => {
@@ -49,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const response = await AuthService.login(email, password);
         const username = response?.user?.name || email; // Adjust based on API response
         const accessToken = response?.accessToken; // Adjust based on API response
-
+        localStorage.setItem("accessToken", accessToken); // Store access token in local storage
         setStoredUser(username);
         setUser(username);
 
